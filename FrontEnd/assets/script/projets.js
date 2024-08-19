@@ -1,30 +1,34 @@
 /**************************************************************
  * CE FICHIER CONTIENT TOUTES LES FONCTIONS POUR LES PROJETS  *
  **************************************************************/
-
+import {loadConfig} from "./config.js";
 /**
  * Fonction asynchrone pour la récupération des projets depuis le localStorage sinon depuis l'API
  * @returns: retourne une promesse
  */
 export async function init() {
-    //Récupération des projets eventuellement stockées dans le localStorage
-    let projets = window.localStorage.getItem('projets');
+    
+        const config = await loadConfig();
 
-    if (projets === null) {
-        // Récupération des projets depuis l'API
-        const reponse = await fetch('http://localhost:5678/api/works');
-        projets = await reponse.json();
-        // Transformation des projets en JSON
-        const valeurProjets = JSON.stringify(projets);
-        // Stockage des informations dans le localStorage
-        window.localStorage.setItem("projets", valeurProjets);
-    } else {
-        projets = JSON.parse(projets);
-    }
-    // Vous pouvez maintenant utiliser 'projets' comme vous le souhaitez
-    //console.log(projets);
-    return projets;
+        //Récupération des projets eventuellement stockées dans le localStorage
+        let projets = window.localStorage.getItem('projets');
+
+        if (projets === null) {
+            // Récupération des projets depuis l'API
+            const reponse = await fetch(config.host + "/api/works");
+            projets = await reponse.json();
+            // Transformation des projets en JSON
+            const valeurProjets = JSON.stringify(projets);
+            // Stockage des informations dans le localStorage
+            window.localStorage.setItem("projets", valeurProjets);
+        } else {
+            projets = JSON.parse(projets);
+        }
+        // Vous pouvez maintenant utiliser 'projets' comme vous le souhaitez
+        //console.log(projets);
+        return projets;
 }
+
 
 /**
  * Ajoute les projets au DOM
