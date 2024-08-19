@@ -8,11 +8,8 @@ init().then(projets => {
     genererBtnFilters(projets);
 })
 
-
-document.addEventListener('DOMContentLoaded', () => {
-    genererHeader();
-    genererFooter();
-});
+genererHeader();
+genererFooter();
 
 document.addEventListener('DOMContentLoaded', function() {
     const authToken = localStorage.getItem('authToken');

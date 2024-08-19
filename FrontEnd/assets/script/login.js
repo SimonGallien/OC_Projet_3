@@ -4,10 +4,9 @@
 
 import {genererHeader, genererFooter, ajoutListenerSeConnecter} from "./functions.js";
 
-document.addEventListener('DOMContentLoaded', () => {
-    genererHeader();
-    genererFooter();
-});
+
+genererHeader();
+genererFooter();
 
 ajoutListenerSeConnecter()
 
