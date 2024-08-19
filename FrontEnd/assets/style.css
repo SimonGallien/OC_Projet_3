@@ -3,6 +3,13 @@
    License: none (public domain)
 */
 
+/* Global var */
+:root {
+    --main-color: #1D6154;
+    --main-h1-color: #B1663C;
+}
+
+
 /* html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -69,7 +76,7 @@ h1{
 	font-family: 'Syne';
 	font-size: 22px;
 	font-weight: 800;
-	color: #B1663C
+	color: var(--main-h1-color);
 }
 
 h1 > span {
@@ -83,7 +90,7 @@ h2{
 	font-family: 'Syne';
 	font-weight: 700;
 	font-size: 30px;
-	color: #1D6154
+	color: var(--main-color);
 }
 nav ul {
 	display: flex;
@@ -97,7 +104,7 @@ nav li {
 }
 
 li:hover {
-	color: #B1663C;
+	color: var(--main-h1-color);
 }
 #introduction {
 	display: flex;
@@ -174,7 +181,7 @@ input[type="submit"]{
 	font-family: 'Syne';
 	font-weight: 700;
 	color: white;
-	background-color: #1D6154;
+	background-color: var(--main-color);
 	margin : 2em auto ;
 	width: 180px;
 	text-align: center;
@@ -198,7 +205,7 @@ footer nav ul {
 }
 
 .filters button {
-	border: 1px solid #1D6154;
+	border: 1px solid var(--main-color);
 	border-radius: 20px;
 	background-color: white;
 	padding-top: 9px;
@@ -208,12 +215,12 @@ footer nav ul {
 	font-family: 'Syne';
 	font-weight: 700;
 	font-size: 16px;
-	color: #1D6154;
+	color: var(--main-color);
 	min-width: 100px;
 }
 
 .filters button:hover {
-	background-color: #1D6154;
+	background-color: var(--main-color);
 	color: white;
 }
 
