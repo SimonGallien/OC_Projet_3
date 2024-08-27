@@ -1,26 +1,22 @@
-import {init, genererProjets, genererBtnFilters, genererHeader, genererFooter} from "./functions.js";
+import {init, genererProjets, genererBtnFilters, genererHeader, genererFooter,checkAuthentification, seDeconnecter} from "./functions.js";
 
-/**
- * Appelle des fonction pour récupérer les projets, les affichers et créer les btn de filtres
- */
-init().then(projets => {
+async function main() {
+    
+    // Appelle des fonction pour récupérer les projets, les affichers et créer les btn de filtres
+    const projets = await init();
     genererProjets(projets);
     genererBtnFilters(projets);
-})
 
-genererHeader();
-genererFooter();
+    // Afficher le Header et Footer
+    await genererHeader();
+    genererFooter();
 
-document.addEventListener('DOMContentLoaded', function() {
-    const authToken = localStorage.getItem('authToken');
-    
-    if (!authToken) {
-        // Si le token n'est pas présent, rediriger vers la page de connexion
-        //window.location.href = 'login.html';
-        console.log("Tu n'est pas connecté")
-    } else {
-        // Charger les données utilisateur ou personnaliser l'interface
-        // Par exemple, afficher le nom de l'utilisateur ou charger des ressources spécifiques
-        console.log("Tu est connecté, bravo")
-    }
-});
+    checkAuthentification();
+
+    const btnLogout = document.querySelector("#btn-logout");
+    btnLogout.addEventListener('click', () => {
+         seDeconnecter();
+    });
+}
+
+main();

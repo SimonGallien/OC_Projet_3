@@ -12,8 +12,8 @@
 	<link rel="stylesheet" href="./assets/css/header.css">
 	<link rel="stylesheet" href="./assets/css/footer.css">
 	<link rel="stylesheet" href="./assets/css/projets.css">
-	<script type="module" src="./assets/script/functions.js" defer></script>
-	<script type="module" src="./assets/script/projets.js" defer></script>
+	<script src="https://kit.fontawesome.com/5d6dcc7e2f.js" crossorigin="anonymous"></script>
+
 	
 </head>
 
@@ -34,7 +34,12 @@
 		</article>
 	</section>
 	<section id="portfolio">
-		<h2>Mes Projets</h2>
+		<div class="projets-title">
+			<h2 class="title">Mes Projets</h2>
+			<div class="projets-edit">
+				<a href="#" id="link-edit" style="display: none;"><i class="fa-regular fa-pen-to-square"></i>modifier</a>
+			</div>
+		</div>
 		<div class="filters">
 		</div>
 		<div class="gallery">
@@ -56,6 +61,7 @@
 </main>
 
 <div id="footer-placeholder"></div>
-
+<script type="module" src="./assets/script/functions.js"></script>
+<script type="module" src="./assets/script/projets.js"></script>
 </body>
 </html>

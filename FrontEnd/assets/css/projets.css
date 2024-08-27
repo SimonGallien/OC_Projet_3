@@ -32,3 +32,36 @@
 	color: #3D3D3D;
 	margin-top: 7px;
 }
+
+.projets-title {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.title {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.projets-edit {
+	padding-left: 15px;
+}
+
+.projets-edit a {
+	padding-left: 15px;
+	text-decoration : none;
+	color : black;
+}
+
+.projets-edit i {
+	padding-right: 10px;
+}
+
+.projets-edit a:hover {
+    color: var(--main-h1-color);;
+}
+
+

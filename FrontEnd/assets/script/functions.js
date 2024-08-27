@@ -8,24 +8,28 @@ import {loadConfig} from "./config.js";
  */
 export async function init() {
     
+        //Chargement de config.json
         const config = await loadConfig();
 
         //Récupération des projets eventuellement stockées dans le localStorage
         let projets = window.localStorage.getItem('projets');
 
         if (projets === null) {
+
             // Récupération des projets depuis l'API
             const reponse = await fetch(config.host + "/api/works");
             projets = await reponse.json();
+
             // Transformation des projets en JSON
             const valeurProjets = JSON.stringify(projets);
+
             // Stockage des informations dans le localStorage
             window.localStorage.setItem("projets", valeurProjets);
+
         } else {
             projets = JSON.parse(projets);
         }
-        // Vous pouvez maintenant utiliser 'projets' comme vous le souhaitez
-        //console.log(projets);
+
         return projets;
 }
 
@@ -123,7 +127,7 @@ export function genererBtnFilters(projets) {
 };
 
 /**
- * Cette fct récupère les valeurs des inputs email et password et envoi une requête au serveur
+ * Cette fct récupère les valeurs des inputs email et password  de l'utilisateur et envoi une requête au serveur
  * Si le serveur répond avec un token => connextion réussi
  */
 export async function ajoutListenerSeConnecter(){
@@ -163,9 +167,42 @@ export async function ajoutListenerSeConnecter(){
                 window.location.href = 'index.html';
             } else {
                 // Gérer les erreurs de connexion
-                alert("Combinaison utilisateur/mot de passe incorrecte.");
+                alert("Erreur dans l'identifiant ou le mot de passe");
             }
         })
     });
+}
+
+export function checkAuthentification(){
+    const authToken = localStorage.getItem('authToken');
+    const btnLogin = document.querySelector("#btn-login");
+    const liFilters = document.querySelector(".filters");
+    const btnLogout = document.querySelector("#btn-logout");
+    
+    if (!authToken) {
+        // Si le token n'est pas présent, rediriger vers la page de connexion
+        //window.location.href = 'login.html';
+        console.log("Tu n'est pas connecté");
+    } else {
+        console.log("Tu est connecté, bravo");
+        // Afficher les boutons d'action du site, déjà dans le code HTML avec display:none
+        const lienEdit = document.querySelector("#link-edit");
+        console.log(lienEdit);
+        lienEdit.setAttribute('style', 'display : inherit');
+
+        // En +, changer Login par LogOut pour permettre à l'utilisateur de se déconnecter
+        btnLogin.setAttribute('style', 'display : none');
+        btnLogout.setAttribute('style', 'display : inherit');
+        liFilters.setAttribute('style', 'display : none');
+    }
+}
+
+export function seDeconnecter(){
+    const btnLogout = document.querySelector("#btn-logout");
+    btnLogout.addEventListener('click', () => {
+        localStorage.removeItem('userId');
+        localStorage.removeItem('authToken');
+        window.location.href = 'index.html';
+    })
 }
 
