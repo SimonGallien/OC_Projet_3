@@ -29,6 +29,9 @@ export async function init() {
         return projets;
 }
 
+/**
+ * Affiche le Header lorsque la fct est appelée
+ */
 export async function genererHeader(){
     // Charger le header
     await fetch('header.html')
@@ -38,6 +41,9 @@ export async function genererHeader(){
     });
 }
 
+/**
+ * Affiche le Footer lorsque la fct est appelée
+ */
 export function genererFooter(){
     // Charger le header
     fetch('footer.html')
@@ -116,6 +122,10 @@ export function genererBtnFilters(projets) {
     };
 };
 
+/**
+ * Cette fct récupère les valeurs des inputs email et password et envoi une requête au serveur
+ * Si le serveur répond avec un token => connextion réussi
+ */
 export async function ajoutListenerSeConnecter(){
 
     const config = await loadConfig();
@@ -126,7 +136,7 @@ export async function ajoutListenerSeConnecter(){
 
         event.preventDefault();
 
-        // Création de l'objet connetion
+        // Création de l'objet connexion
         const connection = {
             email: event.target.querySelector('.formulaire-connection input[type="email"]').value,
             password: event.target.querySelector('.formulaire-connection input[type="password"]').value,
