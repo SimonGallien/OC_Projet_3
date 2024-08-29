@@ -1,3 +1,9 @@
+* {
+	margin : 0;
+	padding :0;
+	box-sizing: border-box;/* Pour que le padding soit prise en compte dans le calcul des largeurs */
+}
+
 .filters {
 	display: flex;
 	justify-content: center;

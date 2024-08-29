@@ -12,7 +12,13 @@
 	<link rel="stylesheet" href="./assets/css/header.css">
 	<link rel="stylesheet" href="./assets/css/footer.css">
 	<link rel="stylesheet" href="./assets/css/projets.css">
+	<link rel="stylesheet" href="./assets/css/modal.css">
 	<script src="https://kit.fontawesome.com/5d6dcc7e2f.js" crossorigin="anonymous"></script>
+	<script type="module" src="./assets/script/functions.js" defer></script>
+	<script type="module" src="./assets/script/modal/modal_fct.js" defer></script>	
+	<script type="module" src="./assets/script/projets.js" defer></script>
+	<script type="module" src="./assets/script/modal/modal.js" defer></script>
+
 
 	
 </head>
@@ -37,7 +43,7 @@
 		<div class="projets-title">
 			<h2 class="title">Mes Projets</h2>
 			<div class="projets-edit">
-				<a href="#" id="link-edit" style="display: none;"><i class="fa-regular fa-pen-to-square"></i>modifier</a>
+				<a href="modal.html#modal1" class="js-modal" id="link-edit" style="display: none;"><i class="fa-regular fa-pen-to-square"></i>modifier</a>
 			</div>
 		</div>
 		<div class="filters">
@@ -61,7 +67,6 @@
 </main>
 
 <div id="footer-placeholder"></div>
-<script type="module" src="./assets/script/functions.js"></script>
-<script type="module" src="./assets/script/projets.js"></script>
+
 </body>
 </html>

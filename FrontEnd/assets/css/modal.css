@@ -1,0 +1,76 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#btn-xmark-close{
+    background-color: white;
+    width: 100%;
+    border: none;
+    text-align: right;
+}
+
+.modal-wrapper {
+	overflow: auto; /* une scroll barre apparaît si le contenu déborde */
+	width: 50%;
+	max-width: calc(100vw - 20px); /*100vh 1 x la largeur de l'écran*/
+	max-height: calc(100vh - 20px); /*100vh 1 x la hauteur de l'écran*/
+	padding: 20px;
+	background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+}
+
+.modal {
+	position : fixed; /* Permet à la boîte modal d'occuper l'entièreté de l'écran */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	top: 0;
+	left:0;
+	width:100%;
+	height: 100%;
+	background: rgba(0, 0 ,0 , 0.8);
+}
+
+#title-modal {
+    color : black;  
+}
+
+.modal-photos {
+	position: relative;
+	margin-top: 20px;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+	gap : 10px;
+}
+
+.modal-photos div {
+	width: 100%;
+	position: relative;
+	/* display: inline-block; */
+	border: 1px solid red;
+}
+
+.modal-photos img {
+	width: 100%;
+	max-width: 100%; 
+	display: block;
+    height:auto;
+}
+
+.modal-photos a {
+	position: absolute;
+    top: 5%; /* Distance par rapport au haut de l'image */
+    right: 5%; /* Distance par rapport au côté droit de l'image */
+    color: white;
+    font-size: 2vh;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 1); /* Optionnel : ajouter un fond pour l'icône */
+    padding: 0.5em;
+    text-align: center;
+    cursor: pointer;
+}
