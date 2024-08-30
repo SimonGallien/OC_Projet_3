@@ -42,8 +42,10 @@ export async function openModal (e) {
     // Vérifier le DOM après le chargement
     console.log("État de la modale après le chargement des images:", modal.innerHTML);
 
-    // Ajout d'un listener pour ouvrir la 2nd page Ajout de phot
+    // Ajout d'un listener pour ouvrir la 2nd page Ajout de photo
     modal.querySelector('#openAddPhotoView').addEventListener('click', showAddPhotoView);
+    // Ajout d'un listener pour revenir à la 1er page
+    modal.querySelector('#prevBtn-photoView').addEventListener('click', showGalleryView);
 
     // Ajout des événements pour fermer la modale
     modal.addEventListener('click', closeModal);
@@ -74,6 +76,8 @@ export function closeModal (e){
     modal.removeEventListener('click', closeModal);
     modal.querySelector(".js-modal-close").removeEventListener('click', closeModal);
     modal.querySelector(".js-modal-stop").removeEventListener('click', stopPropagation);
+    modal.querySelector('#openAddPhotoView').removeEventListener('click', showAddPhotoView);
+    modal.querySelector('#prevBtn-photoView').removeEventListener('click', showGalleryView);
 
     // Libérer la référence à la modale
     modal = null;
@@ -142,4 +146,18 @@ function showAddPhotoView () {
     modal.querySelector("#addPhotoView").style.display = null;
     // On récupère l'id du btn flèche qui sert à retourner à galleryPhoto
     modal.querySelector("#prevBtn-photoView").style.display = null;
+}
+
+/**
+ * Cette fct cache dans la modale la div avec l'id addPhotoView et + l'icone prevBtn-photoView
+ * et montre la div avec l'id galleryView
+ */
+function showGalleryView () {
+    console.log("Ouverture de Galerie Photo");
+
+    // On récupère les 2 id galleryView et addPhotoView et on cache addPhotoView et affiche galleryView
+    modal.querySelector("#galleryView").style.display = null;
+    modal.querySelector("#addPhotoView").style.display = "none";
+    // On récupère l'id du btn flèche qui sert à retourner à galleryPhoto
+    modal.querySelector("#prevBtn-photoView").style.display = "none";
 }
