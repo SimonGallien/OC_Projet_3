@@ -42,6 +42,9 @@ export async function openModal (e) {
     // Vérifier le DOM après le chargement
     console.log("État de la modale après le chargement des images:", modal.innerHTML);
 
+    // Ajout d'un listener pour ouvrir la 2nd page Ajout de phot
+    modal.querySelector('#openAddPhotoView').addEventListener('click', showAddPhotoView);
+
     // Ajout des événements pour fermer la modale
     modal.addEventListener('click', closeModal);
     modal.querySelector(".js-modal-close").addEventListener('click', closeModal);
@@ -125,4 +128,18 @@ export function chargerImgModal(modalContainer) {
     });
 
     console.log("État de la galerie après ajout des images:", modalContainer.innerHTML);
+}
+
+/**
+ * Cette fct cache dans la modale la div avec l'id galleryView et 
+ * montre la div avec l'id addPhotoView + l'icone prevBtn-photoView
+ */
+function showAddPhotoView () {
+    console.log("Ouverture de Ajout Photo");
+
+    // On récupère les 2 id galleryView et addPhotoView et on cache galleryView et affiche addPhotoView
+    modal.querySelector("#galleryView").style.display = "none";
+    modal.querySelector("#addPhotoView").style.display = null;
+    // On récupère l'id du btn flèche qui sert à retourner à galleryPhoto
+    modal.querySelector("#prevBtn-photoView").style.display = null;
 }

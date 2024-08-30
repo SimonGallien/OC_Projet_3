@@ -1,7 +1,41 @@
-* {
-	margin : 0;
-	padding :0;
-	box-sizing: border-box;/* Pour que le padding soit prise en compte dans le calcul des largeurs */
+section {
+	margin-left:245px;
+	margin-right:245px;
+}
+
+#introduction {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 150px;
+	margin-bottom: 150px;
+}
+
+#introduction img {
+	height: 355px;
+}
+
+#introduction article {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding-left: 72px;
+	max-width: 50%;
+	
+}
+
+#introduction h2 {
+	margin-bottom: 1em;
+}
+
+.gallery {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-column-gap: 17px;
+	grid-row-gap: 17px;
+}
+
+#portfolio {
+	margin-bottom: 55px;
 }
 
 .filters {
@@ -15,7 +49,7 @@
 .filters button {
 	border: 1px solid var(--main-color);
 	border-radius: 20px;
-	background-color: white;
+	background-color: var(--main-background-color);
 	padding-top: 9px;
 	padding-bottom: 9px;
 	padding-left: 10px;
@@ -35,7 +69,7 @@
 .gallery figcaption {
 	font-size: 13px;
 	font-weight: 400;
-	color: #3D3D3D;
+	color: var(--second-txt-color);
 	margin-top: 7px;
 }
 
@@ -58,16 +92,8 @@
 
 .projets-edit a {
 	padding-left: 15px;
-	text-decoration : none;
-	color : black;
 }
 
 .projets-edit i {
 	padding-right: 10px;
 }
-
-.projets-edit a:hover {
-    color: var(--main-h1-color);;
-}
-
-

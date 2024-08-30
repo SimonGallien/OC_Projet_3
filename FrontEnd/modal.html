@@ -1,7 +1,10 @@
 <aside id="modal1" class="modal" role="dialog" aria-labelledby="title-modal" aria-hidden="true">
     <div class="modal-wrapper js-modal-stop">
-        <button id="btn-xmark-close" class="js-modal-close"><i class="fa-solid fa-xmark"></i></button>
-        <!-- <button ><i class="fa-solid fa-arrow-left"></i></button> -->
+
+        <div class="icone-modal">
+            <button id="btn-xmark-close" class="js-modal-close"><i class="fa-solid fa-xmark"></i></button>
+            <button id="prevBtn-photoView" style="display: none;"><i class="fa-solid fa-arrow-left"></i></button>
+        </div>
 
         <!-- Vue Galerie photo -->
         <div id="galleryView">
@@ -16,12 +19,24 @@
         <!-- Vue Ajout photo -->
         <div id="addPhotoView" style="display: none;">
             <h2 id="title-modal">Ajout photo</h2>
-            <form>
+
+            <form class="modal-form">
                 <!-- Boîte + Ajouter photo -->
+                 <label for="imageUpload" class="custom-file-upload">
+                    <i class="fa-regular fa-image"></i> 
+                    <p class="modal-form-txt">+ Ajouter photo</p>
+                    <input type="file" id="imageUpload" name="image" accept="image/*">
+                    <p class="modal-form-txtFormat">jpeg, png : 4mo max</p>
+                 </label>
+
                 <label>Titre</label>
-                <input>
-                <label>Catégorie</label>
-                <input>
+                <input type="text">
+                <label for="choix">Catégorie</label>
+                <select id="choix" name="choix">
+                    <option value="option1">Option 1</option>
+                    <option value="option1">Option 2</option>
+                    <option value="option1">Option 3</option>
+                </select>
                 <input type="submit" value="Valider">
             </form> 
         </div>
