@@ -98,6 +98,7 @@ export function genererProjets(projets) {
 
         // Création d’une balise dédiée à un projet
         const figureElement = document.createElement("figure");
+        figureElement.setAttribute('figureId', figure.category.id);
 
         // Création des balises 
         const imageElement = document.createElement("img");
@@ -118,7 +119,7 @@ export function genererProjets(projets) {
  * Génère les bouttons de filtres en fonction du nbr de catégories
  * @param {*} projets 
  */
-export async function genererBtnFilters(listCategories) {
+export async function createBtnFilters(listCategories) {
     //Création de l'élément DOM qui accuiellera les boutons de filtres
     const divFilters = document.querySelector(".filters");
 
@@ -127,11 +128,6 @@ export async function genererBtnFilters(listCategories) {
     buttonElement.innerText = `Tous`;
     buttonElement.setAttribute(`class`, `btnTous`);
     divFilters.appendChild(buttonElement);
-    // const btnTous = document.querySelector(".btnTous");
-    // btnTous.addEventListener("click", () => {
-    //     document.querySelector(".gallery").innerHTML = "";
-    //     genererProjets(projets);
-    // });
 
     for (let i = 0; i < listCategories.length; i++) {
         const category = listCategories[i];
@@ -148,15 +144,6 @@ export async function genererBtnFilters(listCategories) {
 
             //On rattache la balise button à la div filters
             divFilters.appendChild(buttonElement);
-
-            // buttonElement.addEventListener("click", () => {
-            //     const projetFiltres = projets.filter(function (projet) {
-            //         return projet.categoryId === buttonId;
-            //     });
-            //     document.querySelector(".gallery").innerHTML = "";
-            //     genererProjets(projetFiltres);
-            // });
-
         };
     };
 };
@@ -241,4 +228,31 @@ export function seDeconnecter(){
         window.location.href = 'index.html';
     })
 }
+
+export function filterByCategory(button){
+    console.log("Clique btn filtre");
+    const buttonAttribute = button.getAttribute('categoryId');
+    const galleryFigure = document.querySelectorAll(".gallery figure");// Récupération de toute les figures dans la div gallery
+    console.log(buttonAttribute);
+
+    if (buttonAttribute) {
+        console.log(`Filtre par catégorie ${buttonAttribute}`);
+        // On cache tout sauf les figures avec ${buttonAttribute}
+        galleryFigure.forEach(figure => {
+            const figureAttribute = figure.getAttribute('figureId');
+            if (figureAttribute === buttonAttribute) {
+                figure.setAttribute("style", "display: null;"); // Affiche la figure
+            } else {
+                figure.setAttribute("style", "display: none;"); // Cache la figure
+            }
+        });
+
+    } else {
+        console.log("Filtre TOUS");
+        // On affiche toute les figures display=null
+        galleryFigure.forEach(figure => {
+            figure.setAttribute("style", "display: null;");
+        });
+    }
+};
 

@@ -1,4 +1,4 @@
-import {init,listeCategories, genererProjets, genererBtnFilters, genererHeader, genererFooter,checkAuthentification, seDeconnecter} from "./functions.js";
+import {init, listeCategories, genererProjets, createBtnFilters, filterByCategory, genererHeader, genererFooter,checkAuthentification, seDeconnecter} from "./functions.js";
 
 async function main() {
     
@@ -7,7 +7,17 @@ async function main() {
     const listCategories = await listeCategories();
 
     genererProjets(listProjets);
-    await genererBtnFilters(listCategories);
+
+    // Création des filtres
+    await createBtnFilters(listCategories);
+
+    // Gestions des filtres
+    const btnFilter = document.querySelectorAll(".filters button"); // Récupération de tout les bouttons de filtres
+    btnFilter.forEach(button =>{
+        button.addEventListener('click', () => {
+           filterByCategory(button);
+       });
+    });
 
     // Afficher le Header et Footer
     await genererHeader();
