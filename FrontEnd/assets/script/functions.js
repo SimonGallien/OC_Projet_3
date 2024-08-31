@@ -33,6 +33,33 @@ export async function init() {
         return projets;
 }
 
+export async function listeCategories() {
+    
+    //Chargement de config.json
+    const config = await loadConfig();
+
+    //Récupération des projets eventuellement stockées dans le localStorage
+    let categories = window.localStorage.getItem('categories');
+
+    if (categories === null) {
+
+        // Récupération des catégories depuis l'API
+        const reponse = await fetch(config.host + "/api/categories");
+        categories = await reponse.json();
+
+        // Transformation des categories en JSON
+        const listeCategories = JSON.stringify(categories);
+
+        // Stockage des informations dans le localStorage
+        window.localStorage.setItem("categories", listeCategories);
+
+    } else {
+        categories = JSON.parse(categories);
+    }
+
+    return categories;
+}
+
 /**
  * Affiche le Header lorsque la fct est appelée
  */
@@ -91,38 +118,45 @@ export function genererProjets(projets) {
  * Génère les bouttons de filtres en fonction du nbr de catégories
  * @param {*} projets 
  */
-export function genererBtnFilters(projets) {
+export async function genererBtnFilters(listCategories) {
     //Création de l'élément DOM qui accuiellera les boutons de filtres
     const divFilters = document.querySelector(".filters");
+
     // Création du bouton "Tous"
     const buttonElement = document.createElement("button");
     buttonElement.innerText = `Tous`;
     buttonElement.setAttribute(`class`, `btnTous`);
     divFilters.appendChild(buttonElement);
-    const btnTous = document.querySelector(".btnTous");
-    btnTous.addEventListener("click", () => {
-        document.querySelector(".gallery").innerHTML = "";
-        genererProjets(projets);
-    });
+    // const btnTous = document.querySelector(".btnTous");
+    // btnTous.addEventListener("click", () => {
+    //     document.querySelector(".gallery").innerHTML = "";
+    //     genererProjets(projets);
+    // });
 
-    for (let i = 0; i < projets.length; i++) {
-        const projet = projets[i];
-        const buttonId = projet.categoryId;
+    for (let i = 0; i < listCategories.length; i++) {
+        const category = listCategories[i];
+        const buttonId = category.id;
+    
+        if (!document.querySelector(`[categoryId="${buttonId}"]`)) {
 
-        if (!document.getElementById(buttonId)) {
             // Création des balises button
             const buttonElement = document.createElement("button");
-            buttonElement.innerText = projet.category.name;
-            buttonElement.id = buttonId;
+            buttonElement.innerText = category.name;
+
+            // buttonElement.id = buttonId;
+            buttonElement.setAttribute('categoryId', buttonId);
+
             //On rattache la balise button à la div filters
             divFilters.appendChild(buttonElement);
-            buttonElement.addEventListener("click", () => {
-                const projetFiltres = projets.filter(function (projet) {
-                    return projet.categoryId === buttonId;
-                });
-                document.querySelector(".gallery").innerHTML = "";
-                genererProjets(projetFiltres);
-            });
+
+            // buttonElement.addEventListener("click", () => {
+            //     const projetFiltres = projets.filter(function (projet) {
+            //         return projet.categoryId === buttonId;
+            //     });
+            //     document.querySelector(".gallery").innerHTML = "";
+            //     genererProjets(projetFiltres);
+            // });
+
         };
     };
 };

@@ -173,6 +173,12 @@ function showGalleryView () {
     modal.querySelector("#prevBtn-photoView").style.display = "none";
 }
 
+/**
+ * Cette fonction envoie une requête au serveur DELETE, si la réponse du serveur est correct
+ * on supprime dynamiquement l'image dans la modale et sur la page projets du site
+ * @param {*} e 
+ * @returns 
+ */
 async function deleteImage(e) {
     e.preventDefault();
     console.log("clique sur icone corbeille");
@@ -207,16 +213,23 @@ async function deleteImage(e) {
 
         console.log('Response status:', response.status);
 
+        /************************************************************************************/
+        // Utilisé les cases à la place des if imbriqué pour gérer les erreurs côté backend
+        /************************************************************************************/
+
         if (response.status === 204) {
             // Pas de contenu à traiter, retournez simplement un objet vide
             console.log('Suppression réussie, aucun contenu renvoyé.');
+
             // On supprime l'image de la modale
             const imageContainer = e.target.closest('div'); // Trouver le conteneur parent de l'image
             if (imageContainer) {
                 imageContainer.remove(); // Supprimer l'élément du DOM
             }
             // On supprime l'image de la page principal
-            // const imageProjet = document.querySelector(`figure[id='${targetId}']`);
+            /************************************************************************************/
+            //Mettre une condition if id image trouvé alors closest
+            /************************************************************************************/
             const imageProjet = document.querySelector(`figure img[id='${targetId}']`).closest('figure');
             if (imageProjet) {
                 console.log('Figure trouvée:', imageProjet);
@@ -239,6 +252,4 @@ async function deleteImage(e) {
     } catch (error) {
         console.error('Erreur lors de la suppression:', error);
     }
-
-    // Rafraîchir la modale ou recharger les images si nécessaire
 }

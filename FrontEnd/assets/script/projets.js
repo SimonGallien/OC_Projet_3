@@ -1,11 +1,13 @@
-import {init, genererProjets, genererBtnFilters, genererHeader, genererFooter,checkAuthentification, seDeconnecter} from "./functions.js";
+import {init,listeCategories, genererProjets, genererBtnFilters, genererHeader, genererFooter,checkAuthentification, seDeconnecter} from "./functions.js";
 
 async function main() {
     
     // Appelle des fonction pour récupérer les projets, les affichers et créer les btn de filtres
-    const projets = await init();
-    genererProjets(projets);
-    genererBtnFilters(projets);
+    const listProjets = await init();
+    const listCategories = await listeCategories();
+
+    genererProjets(listProjets);
+    await genererBtnFilters(listCategories);
 
     // Afficher le Header et Footer
     await genererHeader();
