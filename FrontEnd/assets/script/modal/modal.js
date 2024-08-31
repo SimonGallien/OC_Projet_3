@@ -1,4 +1,4 @@
-import {openModal, closeModal, chargerImgModal} from "./modal_fct.js";
+import {openModal, closeModal} from "./modal_fct.js";
 
 document.querySelectorAll('.js-modal').forEach(a => {
     a.addEventListener('click', async (e) => {

@@ -1,5 +1,6 @@
 /*Ce fichier contient toutes les fonctions qui gère la boîte modal*/
 import {init} from "../functions.js";
+import {loadConfig} from "../config.js";
 let modal = null; 
 const projets = await init();
 
@@ -42,6 +43,13 @@ export async function openModal (e) {
     // Vérifier le DOM après le chargement
     console.log("État de la modale après le chargement des images:", modal.innerHTML);
 
+    // Ajout d'un listener pour chaque icone corbeille qui appelle la fct delteImage
+    modal.querySelectorAll('.modal-photos .fa-trash-can').forEach(a => {
+        a.addEventListener('click', async (e) => {
+            deleteImage(e);
+        });
+    });
+
     // Ajout d'un listener pour ouvrir la 2nd page Ajout de photo
     modal.querySelector('#openAddPhotoView').addEventListener('click', showAddPhotoView);
     // Ajout d'un listener pour revenir à la 1er page
@@ -51,6 +59,8 @@ export async function openModal (e) {
     modal.addEventListener('click', closeModal);
     modal.querySelector(".js-modal-close").addEventListener('click', closeModal);
     modal.querySelector(".js-modal-stop").addEventListener('click', stopPropagation);
+
+    return modal;
 }
 
 export function closeModal (e){
@@ -121,8 +131,9 @@ export function chargerImgModal(modalContainer) {
 
         imageElement.src = img.imageUrl;
         imageElement.alt = img.title;
-        linkElement.href = "#";
+        imageElement.id = img.id;
         iconeElement.classList.add("fa-solid", "fa-trash-can");
+        iconeElement.id = img.id;
 
         imageContainer.appendChild(imageElement);
         imageContainer.appendChild(linkElement);
@@ -160,4 +171,74 @@ function showGalleryView () {
     modal.querySelector("#addPhotoView").style.display = "none";
     // On récupère l'id du btn flèche qui sert à retourner à galleryPhoto
     modal.querySelector("#prevBtn-photoView").style.display = "none";
+}
+
+async function deleteImage(e) {
+    e.preventDefault();
+    console.log("clique sur icone corbeille");
+
+    // On récupère l'ID de l'icone qui est le même que l'image
+    const targetId = e.target.getAttribute('id');
+    console.log("Id to delete", targetId);
+
+    // Envoie du requête de suppression à l'API 
+    //       curl -X 'DELETE' \
+    //      'http://localhost:5678/api/works/{id' \
+    //      -H 'accept: */*' \
+    //      -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTcyNTEwMjM3NSwiZXhwIjoxNzI1MTg4Nzc1fQ.bxOsafIFD5CPVS92qjNWWkc2UaljVNNlrQcHCGHq8C4'
+
+    const config = await loadConfig();
+
+    const token = localStorage.getItem('authToken');
+    const urlDelete = `${config.host}/api/works/${targetId}`;
+
+    console.log(`Token : ${token}`);
+    console.log(`request URL : ${urlDelete}`);
+
+    // Envoi de la requête DELETE à l'API
+    try {
+        const response = await fetch(urlDelete, {
+            method: 'DELETE',
+            headers: {
+                'accept': '*/*',
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+
+        console.log('Response status:', response.status);
+
+        if (response.status === 204) {
+            // Pas de contenu à traiter, retournez simplement un objet vide
+            console.log('Suppression réussie, aucun contenu renvoyé.');
+            // On supprime l'image de la modale
+            const imageContainer = e.target.closest('div'); // Trouver le conteneur parent de l'image
+            if (imageContainer) {
+                imageContainer.remove(); // Supprimer l'élément du DOM
+            }
+            // On supprime l'image de la page principal
+            // const imageProjet = document.querySelector(`figure[id='${targetId}']`);
+            const imageProjet = document.querySelector(`figure img[id='${targetId}']`).closest('figure');
+            if (imageProjet) {
+                console.log('Figure trouvée:', imageProjet);
+                imageProjet.remove(); // Supprimer l'élément du DOM
+            } else {
+                console.log('Aucune figure trouvée pour cet ID d\'image.');
+            }
+            return;
+        }
+
+        // Traitement du contenu de la réponse, s'il existe
+        const text = await response.text();
+        if (text) {
+            const data = JSON.parse(text);
+            console.log('Données:', data);
+        } else {
+            console.log('Réponse vide reçue.');
+        }
+
+    } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+    }
+
+    // Rafraîchir la modale ou recharger les images si nécessaire
 }

@@ -76,6 +76,7 @@ export function genererProjets(projets) {
         const imageElement = document.createElement("img");
         imageElement.src = figure.imageUrl;
         imageElement.alt = figure.title;
+        imageElement.id = figure.id;
         const nomElement = document.createElement("figcaption");
         nomElement.innerText = figure.title;
 
