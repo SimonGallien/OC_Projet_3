@@ -187,8 +187,9 @@ export function checkAuthentification(){
         console.log("Tu est connecté, bravo");
         // Afficher les boutons d'action du site, déjà dans le code HTML avec display:none
         const lienEdit = document.querySelector("#link-edit");
-        // console.log(lienEdit);
+        const editHeader = document.querySelector("#edit-header");
         lienEdit.setAttribute('style', 'display : inherit');
+        editHeader.setAttribute('style', 'display : inherit');
 
         // En +, changer Login par LogOut pour permettre à l'utilisateur de se déconnecter
         btnLogin.setAttribute('style', 'display : none');

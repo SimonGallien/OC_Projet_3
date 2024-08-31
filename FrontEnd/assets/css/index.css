@@ -1,3 +1,14 @@
+#edit-header {
+	color:white;
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 60px;
+	font-size: 16px;
+	gap: 10px;
+}
+
 section {
 	margin-left:245px;
 	margin-right:245px;
