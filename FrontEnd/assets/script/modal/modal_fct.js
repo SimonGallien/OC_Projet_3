@@ -3,16 +3,18 @@
 import {loadConfig} from "../config.js";
 let modal = null; 
 
+/**
+ * Affichage de la boîte modale
+ * @param {*} e : évènement suite au click sur le lien modifier
+ * @returns modal
+ */
 export async function openModal (e) {
-    e.preventDefault();
     const target = e.target.getAttribute('href');
-    console.log("Cible de la modale", target);
     
     if (target.startsWith('#')){
         modal = document.querySelector(target);
     } else {
         modal = await loadModal(target);
-        console.log("Etat de l'élément au début : ", modal.querySelector(".modal-photos"));
     }
 
     if (!modal) {
@@ -28,14 +30,16 @@ export async function openModal (e) {
     return modal;
 }
 
+/**
+ * Cache la modale et supprime tout les listener de cette modale, réinitialise le contenu de la galerie
+ * @param {*} e 
+ */
 export function closeModal (e){
     if (modal === null) return;
     e.preventDefault();
-    console.log("Fermeture de la modale déclenchée");
 
     // Cacher la modale
     modal.style.display = "none";
-    console.log("La modale est cachée");
     modal.setAttribute('aria-hidden', 'true');
     modal.removeAttribute('aria-modal');
 
@@ -45,23 +49,36 @@ export function closeModal (e){
         modalPhoto.innerHTML = '';  // Vider le contenu
     }
 
-    console.log("État du DOM après fermeture : ", document.querySelector('.modal-photos').innerHTML);
-
     // Nettoyer les événements
     modal.removeEventListener('click', closeModal);
     modal.querySelector(".js-modal-close").removeEventListener('click', closeModal);
     modal.querySelector(".js-modal-stop").removeEventListener('click', stopPropagation);
     modal.querySelector('#openAddPhotoView').removeEventListener('click', showAddPhotoView);
     modal.querySelector('#prevBtn-photoView').removeEventListener('click', showGalleryView);
-    // Libérer la référence à la modale
     modal.querySelector(".btn-Send-Photo").removeEventListener('click', addImage);
+    modal.querySelector("#imageUpload").removeEventListener('change', previewImage);
+    modal.querySelectorAll('.modal-photos .fa-trash-can').forEach(a => {
+        a.removeEventListener('click', async (e) => {
+            e.preventDefault();
+            await deleteImage(e);
+        });
+    });
     modal = null;
 }
 
+/**
+ * Empèche la modale de se fermer sur un click sur la modale
+ * @param {*} e 
+ */
 export function stopPropagation (e) {
     e.stopPropagation();
 }
 
+/**
+ * Charge la modale dans le DOM
+ * @param {*} url de la modale
+ * @returns le code HTML de la modale
+ */
 async function loadModal (url) {
     // Charger le contenu de modal.html via fetch
     const target = '#' + url.split('#')[1]; // Extraire l'ID cible de l'URL
@@ -77,13 +94,15 @@ async function loadModal (url) {
     return element;
 }
 
+/**
+ * Chaque images dans la galerie est affichée dans la modale avec l'icone de corbeille
+ * @returns End function en cas d'erreur
+ */
 export async function loadImgModal() {
     const modalContainer = modal.querySelector(".modal-photos");
     // Réinitialiser la galerie avant de la recharger
-    console.log("Etat de l'élément au début : ", modalContainer);
     if (modalContainer) {
         modalContainer.innerHTML = ''; // Vider le contenu existant pour éviter des duplications
-        console.log("Galerie vide");
     } else {
         console.error("L'élément .modal-photos n'a pas été trouvé dans la modale");
     }
@@ -91,13 +110,10 @@ export async function loadImgModal() {
     // Récupération des images dans la gallerie
     const galleryImages = document.querySelectorAll(".gallery figure img");
     if (!galleryImages) {
-        console.log("Aucune images n'a été trouvé dans le DOM.");
         return;
     }
 
     galleryImages.forEach(img => {
-        console.log("Ajout d'une image à la galerie");
-
         const imageContainer = document.createElement("div");
         const imageElement = document.createElement("img");
         const iconeElement = document.createElement("i");
@@ -130,7 +146,6 @@ export async function loadFormModal(modal) {
     // Pour chaque catégorie
     filtersButton.forEach (btn =>{
         if (btn.innerText !== "Tous") {
-            console.log(`Ajout de la catégorie : "${btn.innerText}"`);
             // Création d'éléments <options> ayant pour valeur le nom de catégorie
             const option = document.createElement("option");
             const buttonAttribute = btn.getAttribute('categoryId');
@@ -140,15 +155,13 @@ export async function loadFormModal(modal) {
             selectForm.appendChild(option);
         }
     });
-}
+};
 
 /**
  * Cette fct cache dans la modale la div avec l'id galleryView et 
  * montre la div avec l'id addPhotoView + l'icone prevBtn-photoView
  */
 export function showAddPhotoView () {
-    console.log("Ouverture de Ajout Photo");
-
     // On récupère les 2 id galleryView et addPhotoView et on cache galleryView et affiche addPhotoView
     modal.querySelector("#galleryView").style.display = "none";
     modal.querySelector("#addPhotoView").style.display = null;
@@ -175,100 +188,85 @@ export function showGalleryView () {
  * @returns 
  */
 export async function deleteImage(e) {
-    console.log("clique sur icone corbeille");
-
-    // On récupère l'ID de l'icone qui est le même que l'image
-    const targetId = e.target.getAttribute('id');
-    console.log("Id to delete", targetId);
-
-    // Envoie du requête de suppression à l'API 
-    //       curl -X 'DELETE' \
-    //      'http://localhost:5678/api/works/{id' \
-    //      -H 'accept: */*' \
-    //      -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTcyNTEwMjM3NSwiZXhwIjoxNzI1MTg4Nzc1fQ.bxOsafIFD5CPVS92qjNWWkc2UaljVNNlrQcHCGHq8C4'
-
-    const config = await loadConfig();
-
-    const token = localStorage.getItem('authToken');
-    const urlDelete = `${config.host}/api/works/${targetId}`;
-
-    console.log(`Token : ${token}`);
-    console.log(`request URL : ${urlDelete}`);
-
-    // Envoi de la requête DELETE à l'API
     try {
+        //Chargement de config.json
+        const config = await loadConfig();
+        if (!config){
+            throw new Error("Problème avec le chargement du fichier config.json");
+        };
+        // On récupère l'ID de l'icone qui est le même que l'image
+        const targetId = e.target.getAttribute('id');
+        // Récupération du token dans le local storage
+        const authToken = localStorage.getItem('authToken');
+        // Si le token n'existe pas, on arrête l'exécution de la fonction
+        if (!authToken) {
+            console.error("Token d'identication abs, session expirée");
+            return
+        };
+        const urlDelete = `${config.host}works/${targetId}`;
+
+        // Envoi de la requête DELETE à l'API
         const response = await fetch(urlDelete, {
             method: 'DELETE',
             headers: {
                 'accept': '*/*',
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${authToken}`,
             }
         });
 
-        console.log('Response status:', response.status);
-
-        /************************************************************************************/
-        // Utilisé les cases à la place des if imbriqué pour gérer les erreurs côté backend
-        /************************************************************************************/
-
-        if (response.status === 204) {
-            // Pas de contenu à traiter, retournez simplement un objet vide
-            console.log('Suppression réussie, aucun contenu renvoyé.');
-
-            // On supprime l'image de la modale
-            const imageContainer = e.target.closest('div'); // Trouver le conteneur parent de l'image
-            if (imageContainer) {
-                imageContainer.remove(); // Supprimer l'élément du DOM
-            }
-            // On supprime l'image de la page principal
-            /************************************************************************************/
-            //Mettre une condition if id image trouvé alors closest
-            /************************************************************************************/
-            const imageProjet = document.querySelector(`figure img[id='${targetId}']`).closest('figure');
-            if (imageProjet) {
-                console.log('Figure trouvée:', imageProjet);
-                imageProjet.remove(); // Supprimer l'élément du DOM
-            } else {
-                console.log('Aucune figure trouvée pour cet ID d\'image.');
-            }
-            return;
+        switch (response.status){
+            case 200 && 204:
+                // On supprime l'image de la modale
+                const imageContainer = e.target.closest('div'); // Trouver le conteneur parent de l'image
+                if (imageContainer) {
+                    imageContainer.remove(); // Supprimer l'élément du DOM
+                }
+                // On supprime l'image de la page principal
+                const imageProjet = document.querySelector(`figure img[id='${targetId}']`).closest('figure');
+                if (imageProjet) {
+                    imageProjet.remove(); // Supprimer l'élément du DOM
+                }
+                break
+            case 401:
+                console.error("Unauthorized");
+                break
+            case 500:
+                console.error("Unexpected Behaviour");
+                break
+            default:
+                console.error("Unexpected Behaviour: try to refresh the webpage");
         }
-
-        // Traitement du contenu de la réponse, s'il existe
-        const text = await response.text();
-        if (text) {
-            const data = JSON.parse(text);
-            console.log('Données:', data);
-        } else {
-            console.log('Réponse vide reçue.');
-        }
-
     } catch (error) {
         console.error('Erreur lors de la suppression:', error);
     }
 }
 
+/**
+ * Ajoute un projet à l'API et sur la page sans devoir recharger
+ * @param {*} e 
+ * @returns en cas d'erreur
+ */
 export async function addImage(e){
     e.preventDefault();
-    console.log("formdata déclenché");
-    // On récupère les données du formulaire depuis
-    // l'objet représentant l'évènement
-    var myForm = document.getElementById("uploadForm");
-    var formData = new FormData(myForm);
-
-    for (const value of formData.values()) {
-        console.log(value);
-    };
-
-    // Envoyer la requête POST à l'API
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-        console.error('Token d\'authentification manquant.');
-        return;
-    }
-
     try {
-        const response = await fetch('http://localhost:5678/api/works', {
+        //Chargement de config.json
+        const config = await loadConfig();
+        if (!config){
+            throw new Error("Problème avec le chargement du fichier config.json");
+        };
+        // On récupère les données du formulaire depuis
+        // l'objet représentant l'évènement
+        var myForm = document.getElementById("uploadForm");
+        var formData = new FormData(myForm);
+
+        // Envoyer la requête POST à l'API
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            console.error('Token d\'authentification manquant.');
+            return;
+        }
+
+        const response = await fetch(config.host + "works", {
             method: 'POST',
             headers: {
                 'accept': 'application/json',
@@ -277,40 +275,70 @@ export async function addImage(e){
             body: formData  // Utiliser formData comme body
         });
 
-        if (response.ok) {
-            console.log('Image envoyée avec succès');
+        switch (response.status) {
+            case 201:
+                // Affichage de l'image sans rechargement de page
+                // 1. On récupère dans la réponse de l'API l'attibut "imageUrl", "title" et "categoryId"(garder la partie filtres opérationnel)
+                let apiResponse = await response.json();
+                const imageUrl = apiResponse.imageUrl;
+                const imageTitle = apiResponse.title;
+                const categoryId = apiResponse.categoryId;
 
-            // Affichage de l'image sans rechargement de page
-            // 1. On récupère dans la réponse de l'API l'attibut "imageUrl", "title" et "categoryId"(garder la partie filtres opérationnel)
-            let apiResponse = await response.json();
-            console.log('API response: ', apiResponse);
-            const imageUrl = apiResponse.imageUrl;
-            const imageTitle = apiResponse.title;
-            const categoryId = apiResponse.categoryId;
-
-            // 2. On ajoute l'image au DOM
-            // 2.1 Création d'une balise <figure>, <img> et <figcaption>
-            const figureElement = document.createElement("figure");
-            const imageElement = document.createElement("img");
-            const nomElement = document.createElement("figcaption");
-            // 2.2 On donne à la balise <img> l'URL et la paramètre Alt qui sera le titre
-            //      et à la balise <figcaption> le titre, la categoryId à la figure
-            imageElement.src = imageUrl;
-            imageElement.alt = imageTitle;
-            nomElement.innerText = imageTitle;
-            figureElement.id = categoryId;
-            // 2.3 Récupération de l'élément parent ou sera placer la figure
-            const sectionPortfolio = document.querySelector(".gallery");
-            // 2.4 On insert <img> et <figcaption> à l'intérieur de la balise <figure>
-            //      et on rattache la balise <figure> dans l'élément parent récupérer à l'étape 2.3
-            sectionPortfolio.appendChild(figureElement);
-            figureElement.appendChild(imageElement);
-            figureElement.appendChild(nomElement);
-        
-        } else {
-            console.error('Erreur lors de l\'envoi de l\'image');
-        }
+                // 2. On ajoute l'image au DOM
+                // 2.1 Création d'une balise <figure>, <img> et <figcaption>
+                const figureElement = document.createElement("figure");
+                const imageElement = document.createElement("img");
+                const nomElement = document.createElement("figcaption");
+                // 2.2 On donne à la balise <img> l'URL et la paramètre Alt qui sera le titre
+                //      et à la balise <figcaption> le titre, la categoryId à la figure
+                imageElement.src = imageUrl;
+                imageElement.alt = imageTitle;
+                nomElement.innerText = imageTitle;
+                figureElement.id = categoryId;
+                // 2.3 Récupération de l'élément parent ou sera placer la figure
+                const sectionPortfolio = document.querySelector(".gallery");
+                // 2.4 On insert <img> et <figcaption> à l'intérieur de la balise <figure>
+                //      et on rattache la balise <figure> dans l'élément parent récupérer à l'étape 2.3
+                sectionPortfolio.appendChild(figureElement);
+                figureElement.appendChild(imageElement);
+                figureElement.appendChild(nomElement);
+                break
+            case 400:
+                console.error('Bad Request');
+                break
+            case 401:
+                console.error('Unauthorized');
+                break
+            case 500:
+                console.error('Unexpected Error');
+                break
+        } 
     } catch (error) {
         console.error('Erreur réseau ou autre problème:', error);
+    }
+};
+
+/**
+ * Affiche l'image en preview dans le formulaire
+ * @param {*} event 
+ */
+export function previewImage(event) {
+    const file = event.target.files[0]; // Récupère le premier fichier sélectionné
+    const preview = document.getElementById('imagePreview'); // Récupère l'élément img pour la prévisualisation
+    if (file) {
+
+        document.querySelector('.fa-image').style.display = 'none';
+        document.querySelector('.modal-form-txt').style.display = 'none';
+        document.querySelector('.modal-form-txtFormat').style.display = 'none';
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result; // Définir la source de l'image comme le résultat de la lecture
+            preview.style.display = 'block'; // Affiche l'image
+        };
+
+        reader.readAsDataURL(file); // Lire le fichier comme une URL de données
+    } else {
+        preview.style.display = 'none'; // Cache l'image si aucun fichier n'est sélectionné
     }
 }

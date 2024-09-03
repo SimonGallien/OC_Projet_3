@@ -1,4 +1,4 @@
-import {openModal, closeModal, loadImgModal, loadFormModal,showAddPhotoView, showGalleryView,stopPropagation, deleteImage, addImage} from "./modal_fct.js";
+import {openModal, closeModal, loadImgModal, loadFormModal,showAddPhotoView, showGalleryView,stopPropagation, deleteImage, addImage, previewImage} from "./modal_fct.js";
 
 const modalDemand = document.querySelector('.js-modal');
 modalDemand.addEventListener('click', async (e) => {
@@ -16,6 +16,7 @@ modalDemand.addEventListener('click', async (e) => {
     modal.querySelector(".js-modal-close").addEventListener('click', closeModal);// Ajout des événements pour fermer la modale
     modal.querySelector(".js-modal-stop").addEventListener('click', stopPropagation);// Ajout des événements pour fermer la modale
     modal.querySelector(".btn-Send-Photo").addEventListener('click', addImage);
+    modal.querySelector("#imageUpload").addEventListener('change', previewImage);
 
     // Ajout d'un listener pour chaque icone corbeille qui appelle la fct delteImage
     modal.querySelectorAll('.modal-photos .fa-trash-can').forEach(a => {
@@ -24,13 +25,6 @@ modalDemand.addEventListener('click', async (e) => {
             await deleteImage(e);
         });
     });
-    
-    // Gestion du formulaire d'ajout de photo
-    // const formElem = document.forms.namedItem("fileinfo");
-    // formElem.addEventListener("submit", async (e) => {
-    //     e.preventDefault(); // Empêche le formulaire de se soumettre de la manière traditionnelle
-    //     //await addImage();
-    // });
 });
 
 // Ferme la modal en appuyant sur la touche Escape du clavier

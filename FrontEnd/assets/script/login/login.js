@@ -5,9 +5,8 @@
 import {genererHeader, genererFooter} from "../index/index_fct.js";
 import {login} from "./login_fct.js";
 
-
-genererHeader();
-genererFooter();
+await genererHeader();
+await genererFooter();
 
 const loginForm = document.querySelector(".formulaire-connection");
 
