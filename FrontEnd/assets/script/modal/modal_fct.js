@@ -1,8 +1,7 @@
 /*Ce fichier contient toutes les fonctions qui gère la boîte modal*/
-import {init} from "../functions.js";
+
 import {loadConfig} from "../config.js";
 let modal = null; 
-const projets = await init();
 
 export async function openModal (e) {
     e.preventDefault();
@@ -21,44 +20,10 @@ export async function openModal (e) {
         return;
     }
 
-    // Réinitialiser la galerie avant de la recharger
-    const modalPhoto = modal.querySelector(".modal-photos");
-    console.log("Etat de l'élément au début : ", modalPhoto);
-    if (modalPhoto) {
-        modalPhoto.innerHTML = ''; // Vide la galerie avant de recharger les images
-        console.log("Galerie vide");
-    } else {
-        console.error("L'élément .modal-photos n'a pas été trouvé dans la modale");
-    }
-
     // Afficher la boîte modal
     modal.style.display = null;
     modal.removeAttribute('aria-hidden');
     modal.setAttribute('aria-modal', 'true');
-
-    // charger les images
-    console.log("Chargement des images");
-    chargerImgModal(modalPhoto);
-
-    // Vérifier le DOM après le chargement
-    console.log("État de la modale après le chargement des images:", modal.innerHTML);
-
-    // Ajout d'un listener pour chaque icone corbeille qui appelle la fct delteImage
-    modal.querySelectorAll('.modal-photos .fa-trash-can').forEach(a => {
-        a.addEventListener('click', async (e) => {
-            deleteImage(e);
-        });
-    });
-
-    // Ajout d'un listener pour ouvrir la 2nd page Ajout de photo
-    modal.querySelector('#openAddPhotoView').addEventListener('click', showAddPhotoView);
-    // Ajout d'un listener pour revenir à la 1er page
-    modal.querySelector('#prevBtn-photoView').addEventListener('click', showGalleryView);
-
-    // Ajout des événements pour fermer la modale
-    modal.addEventListener('click', closeModal);
-    modal.querySelector(".js-modal-close").addEventListener('click', closeModal);
-    modal.querySelector(".js-modal-stop").addEventListener('click', stopPropagation);
 
     return modal;
 }
@@ -88,12 +53,12 @@ export function closeModal (e){
     modal.querySelector(".js-modal-stop").removeEventListener('click', stopPropagation);
     modal.querySelector('#openAddPhotoView').removeEventListener('click', showAddPhotoView);
     modal.querySelector('#prevBtn-photoView').removeEventListener('click', showGalleryView);
-
     // Libérer la référence à la modale
+    modal.querySelector(".btn-Send-Photo").removeEventListener('click', addImage);
     modal = null;
 }
 
-function stopPropagation (e) {
+export function stopPropagation (e) {
     e.stopPropagation();
 }
 
@@ -112,16 +77,25 @@ async function loadModal (url) {
     return element;
 }
 
-export function chargerImgModal(modalContainer) {
+export async function loadImgModal() {
+    const modalContainer = modal.querySelector(".modal-photos");
+    // Réinitialiser la galerie avant de la recharger
+    console.log("Etat de l'élément au début : ", modalContainer);
+    if (modalContainer) {
+        modalContainer.innerHTML = ''; // Vider le contenu existant pour éviter des duplications
+        console.log("Galerie vide");
+    } else {
+        console.error("L'élément .modal-photos n'a pas été trouvé dans la modale");
+    }
 
-    if (!modalContainer) {
-        console.error("L'élément .modal-photos n'a pas été trouvé dans le DOM.");
+    // Récupération des images dans la gallerie
+    const galleryImages = document.querySelectorAll(".gallery figure img");
+    if (!galleryImages) {
+        console.log("Aucune images n'a été trouvé dans le DOM.");
         return;
     }
 
-    modalContainer.innerHTML = ''; // Vider le contenu existant pour éviter des duplications
-
-    projets.forEach(img => {
+    galleryImages.forEach(img => {
         console.log("Ajout d'une image à la galerie");
 
         const imageContainer = document.createElement("div");
@@ -129,8 +103,8 @@ export function chargerImgModal(modalContainer) {
         const iconeElement = document.createElement("i");
         const linkElement = document.createElement("a");
 
-        imageElement.src = img.imageUrl;
-        imageElement.alt = img.title;
+        imageElement.src = img.src;
+        imageElement.alt = img.alt;
         imageElement.id = img.id;
         iconeElement.classList.add("fa-solid", "fa-trash-can");
         iconeElement.id = img.id;
@@ -141,15 +115,38 @@ export function chargerImgModal(modalContainer) {
 
         modalContainer.appendChild(imageContainer); // Ajouter les éléments dans le DOM
     });
+}
 
-    console.log("État de la galerie après ajout des images:", modalContainer.innerHTML);
+/**
+ * Affiche la liste des catégories dans le formulaire d'ajout de photo
+ * La liste des catégories est reprise de la partie Filters
+ * @param {*} modal 
+ */
+export async function loadFormModal(modal) {
+    // Récupération des noms de catégories sur la page principal dans la partie Filtres
+    const filtersButton = document.querySelectorAll(".filters button");
+    // Récupération dans la modale de la balise <select>
+    const selectForm = modal.querySelector("#category");
+    // Pour chaque catégorie
+    filtersButton.forEach (btn =>{
+        if (btn.innerText !== "Tous") {
+            console.log(`Ajout de la catégorie : "${btn.innerText}"`);
+            // Création d'éléments <options> ayant pour valeur le nom de catégorie
+            const option = document.createElement("option");
+            const buttonAttribute = btn.getAttribute('categoryId');
+            option.innerText = btn.innerText;
+            option.value = buttonAttribute;
+            // Ajout des éléments <option> au DOM
+            selectForm.appendChild(option);
+        }
+    });
 }
 
 /**
  * Cette fct cache dans la modale la div avec l'id galleryView et 
  * montre la div avec l'id addPhotoView + l'icone prevBtn-photoView
  */
-function showAddPhotoView () {
+export function showAddPhotoView () {
     console.log("Ouverture de Ajout Photo");
 
     // On récupère les 2 id galleryView et addPhotoView et on cache galleryView et affiche addPhotoView
@@ -160,13 +157,11 @@ function showAddPhotoView () {
 }
 
 /**
- * Cette fct cache dans la modale la div avec l'id addPhotoView et + l'icone prevBtn-photoView
+ * Cette fct cache dans la modale la div avec l'id addPhotoView et l'icone prevBtn-photoView
  * et montre la div avec l'id galleryView
  */
-function showGalleryView () {
-    console.log("Ouverture de Galerie Photo");
-
-    // On récupère les 2 id galleryView et addPhotoView et on cache addPhotoView et affiche galleryView
+export function showGalleryView () {
+        // On récupère les 2 id galleryView et addPhotoView et on cache addPhotoView et affiche galleryView
     modal.querySelector("#galleryView").style.display = null;
     modal.querySelector("#addPhotoView").style.display = "none";
     // On récupère l'id du btn flèche qui sert à retourner à galleryPhoto
@@ -179,8 +174,7 @@ function showGalleryView () {
  * @param {*} e 
  * @returns 
  */
-async function deleteImage(e) {
-    e.preventDefault();
+export async function deleteImage(e) {
     console.log("clique sur icone corbeille");
 
     // On récupère l'ID de l'icone qui est le même que l'image
@@ -251,5 +245,72 @@ async function deleteImage(e) {
 
     } catch (error) {
         console.error('Erreur lors de la suppression:', error);
+    }
+}
+
+export async function addImage(e){
+    e.preventDefault();
+    console.log("formdata déclenché");
+    // On récupère les données du formulaire depuis
+    // l'objet représentant l'évènement
+    var myForm = document.getElementById("uploadForm");
+    var formData = new FormData(myForm);
+
+    for (const value of formData.values()) {
+        console.log(value);
+    };
+
+    // Envoyer la requête POST à l'API
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        console.error('Token d\'authentification manquant.');
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:5678/api/works', {
+            method: 'POST',
+            headers: {
+                'accept': 'application/json',
+                'Authorization': `Bearer ${token}`,  // Si un token est nécessaire
+            },
+            body: formData  // Utiliser formData comme body
+        });
+
+        if (response.ok) {
+            console.log('Image envoyée avec succès');
+
+            // Affichage de l'image sans rechargement de page
+            // 1. On récupère dans la réponse de l'API l'attibut "imageUrl", "title" et "categoryId"(garder la partie filtres opérationnel)
+            let apiResponse = await response.json();
+            console.log('API response: ', apiResponse);
+            const imageUrl = apiResponse.imageUrl;
+            const imageTitle = apiResponse.title;
+            const categoryId = apiResponse.categoryId;
+
+            // 2. On ajoute l'image au DOM
+            // 2.1 Création d'une balise <figure>, <img> et <figcaption>
+            const figureElement = document.createElement("figure");
+            const imageElement = document.createElement("img");
+            const nomElement = document.createElement("figcaption");
+            // 2.2 On donne à la balise <img> l'URL et la paramètre Alt qui sera le titre
+            //      et à la balise <figcaption> le titre, la categoryId à la figure
+            imageElement.src = imageUrl;
+            imageElement.alt = imageTitle;
+            nomElement.innerText = imageTitle;
+            figureElement.id = categoryId;
+            // 2.3 Récupération de l'élément parent ou sera placer la figure
+            const sectionPortfolio = document.querySelector(".gallery");
+            // 2.4 On insert <img> et <figcaption> à l'intérieur de la balise <figure>
+            //      et on rattache la balise <figure> dans l'élément parent récupérer à l'étape 2.3
+            sectionPortfolio.appendChild(figureElement);
+            figureElement.appendChild(imageElement);
+            figureElement.appendChild(nomElement);
+        
+        } else {
+            console.error('Erreur lors de l\'envoi de l\'image');
+        }
+    } catch (error) {
+        console.error('Erreur réseau ou autre problème:', error);
     }
 }

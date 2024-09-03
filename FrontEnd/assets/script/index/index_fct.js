@@ -1,7 +1,7 @@
 /**************************************************************
  * CE FICHIER CONTIENT TOUTES LES FONCTIONS   *
  **************************************************************/
-import {loadConfig} from "./config.js";
+import {loadConfig} from "../config.js";
 /**
  * Fonction asynchrone pour la récupération des projets depuis le localStorage sinon depuis l'API
  * @returns: retourne une promesse
@@ -11,51 +11,37 @@ export async function init() {
         //Chargement de config.json
         const config = await loadConfig();
 
-        //Récupération des projets eventuellement stockées dans le localStorage
-        let projets = window.localStorage.getItem('projets');
+        // Récupération des projets depuis l'API
+        const reponse = await fetch(config.host + "/api/works");
+        let projets = await reponse.json();
 
-        if (projets === null) {
+        // Transformation des projets en JSON
+        const valeurProjets = JSON.stringify(projets);
 
-            // Récupération des projets depuis l'API
-            const reponse = await fetch(config.host + "/api/works");
-            projets = await reponse.json();
-
-            // Transformation des projets en JSON
-            const valeurProjets = JSON.stringify(projets);
-
-            // Stockage des informations dans le localStorage
-            window.localStorage.setItem("projets", valeurProjets);
-
-        } else {
-            projets = JSON.parse(projets);
-        }
+        // Stockage des informations dans le localStorage
+        window.localStorage.setItem("projets", valeurProjets);
 
         return projets;
 }
 
+/**
+ * Fonction asynchrone qui fait une requête HTTP à l'API pour récupérer la liste des catégories
+ * @returns la liste des catégories (id, name)
+ */
 export async function listeCategories() {
     
     //Chargement de config.json
     const config = await loadConfig();
 
-    //Récupération des projets eventuellement stockées dans le localStorage
-    let categories = window.localStorage.getItem('categories');
+    // Récupération des catégories depuis l'API
+    const reponse = await fetch(config.host + "/api/categories");
+    let categories = await reponse.json();
 
-    if (categories === null) {
+    // Transformation des categories en JSON
+    const listeCategories = JSON.stringify(categories);
 
-        // Récupération des catégories depuis l'API
-        const reponse = await fetch(config.host + "/api/categories");
-        categories = await reponse.json();
-
-        // Transformation des categories en JSON
-        const listeCategories = JSON.stringify(categories);
-
-        // Stockage des informations dans le localStorage
-        window.localStorage.setItem("categories", listeCategories);
-
-    } else {
-        categories = JSON.parse(categories);
-    }
+    // Stockage des informations dans le localStorage
+    window.localStorage.setItem("categories", listeCategories);
 
     return categories;
 }
@@ -116,8 +102,8 @@ export function genererProjets(projets) {
 }
 
 /**
- * Génère les bouttons de filtres en fonction du nbr de catégories
- * @param {*} projets 
+ * Affiche les options de filtres en prenant en paramètre la liste des catégories
+ * @param {*} listCategories 
  */
 export async function createBtnFilters(listCategories) {
     //Création de l'élément DOM qui accuiellera les boutons de filtres
@@ -149,52 +135,8 @@ export async function createBtnFilters(listCategories) {
 };
 
 /**
- * Cette fct récupère les valeurs des inputs email et password  de l'utilisateur et envoi une requête au serveur
- * Si le serveur répond avec un token => connextion réussi
+ * Passe la page en mode édition si le token existe dans le local storage
  */
-export async function ajoutListenerSeConnecter(){
-
-    const config = await loadConfig();
-
-    const formulaireSeConnecter = document.querySelector(".formulaire-connection");
-
-    formulaireSeConnecter.addEventListener("submit", function (event) {
-
-        event.preventDefault();
-
-        // Création de l'objet connexion
-        const connection = {
-            email: event.target.querySelector('.formulaire-connection input[type="email"]').value,
-            password: event.target.querySelector('.formulaire-connection input[type="password"]').value,
-        };
-
-        // Converstion de la charge utile en json
-        const chargeUtile = JSON.stringify(connection);
-
-        fetch(config.host + "/api/users/login",{
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: chargeUtile
-        })
-
-        .then(response => response.json())
-        .then(data => {
-            console.log(data)
-            if (data.token) { // Vérifier si le token est présent dans la réponse
-                // Stocker l'ID de l'utilisateur et le token dans le localStorage
-                localStorage.setItem('userId', data.userId);
-                localStorage.setItem('authToken', data.token);
-
-                // Rediriger vers la page d'accueil
-                window.location.href = 'index.html';
-            } else {
-                // Gérer les erreurs de connexion
-                alert("Erreur dans l'identifiant ou le mot de passe");
-            }
-        })
-    });
-}
-
 export function checkAuthentification(){
     const authToken = localStorage.getItem('authToken');
     const btnLogin = document.querySelector("#btn-login");
@@ -218,8 +160,12 @@ export function checkAuthentification(){
         btnLogout.setAttribute('style', 'display : inherit');
         liFilters.setAttribute('style', 'display : none');
     }
+    
 }
 
+/**
+ * Déconnecte l'utilisateur du mode édition et affichage en mode normal
+ */
 export function seDeconnecter(){
     const btnLogout = document.querySelector("#btn-logout");
     btnLogout.addEventListener('click', () => {
@@ -229,6 +175,11 @@ export function seDeconnecter(){
     })
 }
 
+/**
+ * Filtre les projets en fonctions du paramètre reçu en entrée, 
+ * cache ou affiche les projets présent dans le DOM
+ * @param {*} button : btn du filtre cliqué par l'utilisateur
+ */
 export function filterByCategory(button){
     console.log("Clique btn filtre");
     const buttonAttribute = button.getAttribute('categoryId');
