@@ -35,7 +35,7 @@ export async function getAllWorks() {
  * Fonction asynchrone qui fait une requête HTTP à l'API pour récupérer la liste des catégories
  * @returns promess catégories ('id', 'name')
  */
-export async function listeCategories() {
+export async function getCategories() {
     try{
         //Chargement de config.json
         const config = await loadConfig();
@@ -91,9 +91,10 @@ export async function genererFooter(){
  * Ajoute les projets au DOM
  * @param {*} projets 
  */
-export function genererProjets(projets) {
+export async function showProjets(projets) {
     // Récupération de l'élément du DOM qui accueillera les projets
     const sectionPortfolio = document.querySelector(".gallery");
+    sectionPortfolio.innerHTML='';
     // S'assurer que la section existe avant de procéder
     if (!sectionPortfolio) {
         console.error("L'élément .gallery n'a pas été trouvé dans le DOM.");

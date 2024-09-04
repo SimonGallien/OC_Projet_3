@@ -1,10 +1,10 @@
-import {getAllWorks, listeCategories, genererProjets, createBtnFilters, filterByCategory, genererHeader, genererFooter,checkAuthentification, seDeconnecter} from "./index_fct.js";
+import {getAllWorks, getCategories, showProjets, createBtnFilters, filterByCategory, genererHeader, genererFooter,checkAuthentification, seDeconnecter} from "./index_fct.js";
     
 // Appelle des fonction pour récupérer les projets, les affichers et créer les btn de filtres
 const listProjets = await getAllWorks();
-const listCategories = await listeCategories();
+const listCategories = await getCategories();
 
-genererProjets(listProjets);
+await showProjets(listProjets);
 
 // Afficher le Header et Footer
 await genererHeader();

@@ -1,19 +1,25 @@
 /*Ce fichier contient toutes les fonctions qui gère la boîte modal*/
 
 import {loadConfig} from "../config.js";
+import {getAllWorks, showProjets} from "../index/index_fct.js";
 let modal = null; 
 
 /**
  * Affichage de la boîte modale
- * @param {*} e : évènement suite au click sur le lien modifier
+ * @param {*} event : évènement suite au click sur le lien modifier
  * @returns modal
  */
-export async function openModal (e) {
-    const target = e.target.getAttribute('href');
-    
-    if (target.startsWith('#')){
-        modal = document.querySelector(target);
+export async function openModal (event) {
+    console.log("Open modale");
+    const target = event.target.getAttribute('href');
+    console.log("Attribut href du boutton modifier: ", target);
+    const targetId = '#' + target.split('#')[1]; // Extraire l'ID cible de l'URL
+    console.log('Recherche de l\'élément avec un ID= ', targetId);
+    if (document.querySelector(targetId)){
+        modal = document.querySelector(targetId);
+        console.log('Element trouvé dans le DOM : ', modal);
     } else {
+        console.log("Element non trouvé, chargement de la modal.....");
         modal = await loadModal(target);
     }
 
@@ -32,37 +38,22 @@ export async function openModal (e) {
 
 /**
  * Cache la modale et supprime tout les listener de cette modale, réinitialise le contenu de la galerie
- * @param {*} e 
+ * @param {*} event 
  */
-export function closeModal (e){
+export async function closeModal (event){
     if (modal === null) return;
-    e.preventDefault();
+
+    event.preventDefault();
+
+    // Nettoyer les événements
+    await removeEventListeners();
 
     // Cacher la modale
     modal.style.display = "none";
     modal.setAttribute('aria-hidden', 'true');
     modal.removeAttribute('aria-modal');
+    //modal.innerHTML="";
 
-    // Réinitialiser le contenu de la galerie
-    const modalPhoto = document.querySelector('.modal-photos');
-    if (modalPhoto) {
-        modalPhoto.innerHTML = '';  // Vider le contenu
-    }
-
-    // Nettoyer les événements
-    modal.removeEventListener('click', closeModal);
-    modal.querySelector(".js-modal-close").removeEventListener('click', closeModal);
-    modal.querySelector(".js-modal-stop").removeEventListener('click', stopPropagation);
-    modal.querySelector('#openAddPhotoView').removeEventListener('click', showAddPhotoView);
-    modal.querySelector('#prevBtn-photoView').removeEventListener('click', showGalleryView);
-    modal.querySelector(".btn-Send-Photo").removeEventListener('click', addImage);
-    modal.querySelector("#imageUpload").removeEventListener('change', previewImage);
-    modal.querySelectorAll('.modal-photos .fa-trash-can').forEach(a => {
-        a.removeEventListener('click', async (e) => {
-            e.preventDefault();
-            await deleteImage(e);
-        });
-    });
     modal = null;
 }
 
@@ -70,8 +61,8 @@ export function closeModal (e){
  * Empèche la modale de se fermer sur un click sur la modale
  * @param {*} e 
  */
-export function stopPropagation (e) {
-    e.stopPropagation();
+export function stopPropagation (event) {
+    event.stopPropagation();
 }
 
 /**
@@ -83,6 +74,7 @@ async function loadModal (url) {
     // Charger le contenu de modal.html via fetch
     const target = '#' + url.split('#')[1]; // Extraire l'ID cible de l'URL
     const html = await fetch(url).then(response => response.text()); // Charger le HTML
+    console.log('Contenu html de la modale', html);
 
     // Créer un fragment de document et insérer le contenu dans le DOM
     const fragment = document.createRange().createContextualFragment(html);
@@ -131,6 +123,22 @@ export async function loadImgModal() {
 
         modalContainer.appendChild(imageContainer); // Ajouter les éléments dans le DOM
     });
+
+    // Ajout d'un listener pour chaque icone corbeille qui appelle la fct delteImage
+    modal.querySelectorAll('.modal-photos .fa-trash-can').forEach(trashIcone => {
+        trashIcone.addEventListener('click', trashIconeClick)
+    });
+}
+
+/**
+ * Call function deleteImage, showProjects(function getAllWorks)
+ * Delete a projet and refresh dynamically the contents 
+ * @param {*} event 
+ */
+async function trashIconeClick(event){
+    event.preventDefault();
+    await deleteImage(event);
+    await showProjets(await getAllWorks());
 }
 
 /**
@@ -138,7 +146,7 @@ export async function loadImgModal() {
  * La liste des catégories est reprise de la partie Filters
  * @param {*} modal 
  */
-export async function loadFormModal(modal) {
+export async function loadFormModal() {
     // Récupération des noms de catégories sur la page principal dans la partie Filtres
     const filtersButton = document.querySelectorAll(".filters button");
     // Récupération dans la modale de la balise <select>
@@ -216,16 +224,10 @@ export async function deleteImage(e) {
 
         switch (response.status){
             case 200 && 204:
-                // On supprime l'image de la modale
-                const imageContainer = e.target.closest('div'); // Trouver le conteneur parent de l'image
-                if (imageContainer) {
-                    imageContainer.remove(); // Supprimer l'élément du DOM
-                }
-                // On supprime l'image de la page principal
-                const imageProjet = document.querySelector(`figure img[id='${targetId}']`).closest('figure');
-                if (imageProjet) {
-                    imageProjet.remove(); // Supprimer l'élément du DOM
-                }
+                //MAJ DES PROJETS ET DE LA MODALE
+                const projets = await getAllWorks();
+                await showProjets(projets);
+                await loadImgModal();
                 break
             case 401:
                 console.error("Unauthorized");
@@ -246,8 +248,8 @@ export async function deleteImage(e) {
  * @param {*} e 
  * @returns en cas d'erreur
  */
-export async function addImage(e){
-    e.preventDefault();
+export async function addImage(event){
+    event.preventDefault();
     try {
         //Chargement de config.json
         const config = await loadConfig();
@@ -256,7 +258,7 @@ export async function addImage(e){
         };
         // On récupère les données du formulaire depuis
         // l'objet représentant l'évènement
-        var myForm = document.getElementById("uploadForm");
+        var myForm = modal.querySelector("#uploadForm");
         var formData = new FormData(myForm);
 
         // Envoyer la requête POST à l'API
@@ -277,31 +279,10 @@ export async function addImage(e){
 
         switch (response.status) {
             case 201:
-                // Affichage de l'image sans rechargement de page
-                // 1. On récupère dans la réponse de l'API l'attibut "imageUrl", "title" et "categoryId"(garder la partie filtres opérationnel)
-                let apiResponse = await response.json();
-                const imageUrl = apiResponse.imageUrl;
-                const imageTitle = apiResponse.title;
-                const categoryId = apiResponse.categoryId;
-
-                // 2. On ajoute l'image au DOM
-                // 2.1 Création d'une balise <figure>, <img> et <figcaption>
-                const figureElement = document.createElement("figure");
-                const imageElement = document.createElement("img");
-                const nomElement = document.createElement("figcaption");
-                // 2.2 On donne à la balise <img> l'URL et la paramètre Alt qui sera le titre
-                //      et à la balise <figcaption> le titre, la categoryId à la figure
-                imageElement.src = imageUrl;
-                imageElement.alt = imageTitle;
-                nomElement.innerText = imageTitle;
-                figureElement.id = categoryId;
-                // 2.3 Récupération de l'élément parent ou sera placer la figure
-                const sectionPortfolio = document.querySelector(".gallery");
-                // 2.4 On insert <img> et <figcaption> à l'intérieur de la balise <figure>
-                //      et on rattache la balise <figure> dans l'élément parent récupérer à l'étape 2.3
-                sectionPortfolio.appendChild(figureElement);
-                figureElement.appendChild(imageElement);
-                figureElement.appendChild(nomElement);
+                // Image reçu par l'API, MAJ des projets dynamiquement et de la modale
+                const projets = await getAllWorks();
+                await showProjets(projets);
+                await loadImgModal();
                 break
             case 400:
                 console.error('Bad Request');
@@ -323,22 +304,118 @@ export async function addImage(e){
  * @param {*} event 
  */
 export function previewImage(event) {
+    console.log("Changement de photo détectée previewImage");
     const file = event.target.files[0]; // Récupère le premier fichier sélectionné
-    const preview = document.getElementById('imagePreview'); // Récupère l'élément img pour la prévisualisation
+    const preview = modal.querySelector('#imagePreview');
     if (file) {
 
-        document.querySelector('.fa-image').style.display = 'none';
-        document.querySelector('.modal-form-txt').style.display = 'none';
-        document.querySelector('.modal-form-txtFormat').style.display = 'none';
+        modal.querySelector('.fa-image').style.display = 'none';
+        modal.querySelector('.modal-form-txt').style.display = 'none';
+        modal.querySelector('.modal-form-txtFormat').style.display = 'none';
 
         const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.src = e.target.result; // Définir la source de l'image comme le résultat de la lecture
+        reader.onload = function(event) {
+            preview.src = event.target.result; // Définir la source de l'image comme le résultat de la lecture
             preview.style.display = 'block'; // Affiche l'image
         };
 
         reader.readAsDataURL(file); // Lire le fichier comme une URL de données
     } else {
         preview.style.display = 'none'; // Cache l'image si aucun fichier n'est sélectionné
+        console.error("Pas d'image sélectionné");
+    }
+}
+
+// Ajout des écouteurs d'événements
+export function addEventListeners() {
+    const openAddPhotoViewListener = modal.querySelector('#openAddPhotoView');
+    const prevBtnPhotoViewListener = modal.querySelector('#prevBtn-photoView');
+    const jsModalCloseListener = modal.querySelector(".js-modal-close");
+    const jsModalStopListener = modal.querySelector(".js-modal-stop");
+    const imageUploadListener = modal.querySelector("#imageUpload"); 
+    const btnSendPhotoListener = modal.querySelector(".btn-Send-Photo");
+
+    if (openAddPhotoViewListener) {
+        openAddPhotoViewListener.addEventListener('click', showAddPhotoView);
+    }
+    if (prevBtnPhotoViewListener) {
+        prevBtnPhotoViewListener.addEventListener('click', showGalleryView);
+    }
+    if (jsModalCloseListener) {
+        jsModalCloseListener.addEventListener('click', closeModal);
+    }
+    if (jsModalStopListener) {
+        jsModalStopListener.addEventListener('click', stopPropagation);
+    }
+    if (imageUploadListener) {
+        imageUploadListener.addEventListener('change', previewImage);
+    }
+    if (btnSendPhotoListener) {
+        btnSendPhotoListener.addEventListener('click', sendImageClick);
+    }
+    // Ajout de l'écouteur de clic pour fermer la modale
+    modal.addEventListener('click', closeModal);
+}
+
+/**
+ * Suppression des écouteurs d'événements
+ */
+async function removeEventListeners() {
+    const openAddPhotoViewListener = modal.querySelector('#openAddPhotoView');
+    const prevBtnPhotoViewListener = modal.querySelector('#prevBtn-photoView');
+    const jsModalCloseListener = modal.querySelector(".js-modal-close");
+    const jsModalStopListener = modal.querySelector(".js-modal-stop");
+    const imageUploadListener = modal.querySelector("#imageUpload"); 
+    const btnSendPhotoListener = modal.querySelector(".btn-Send-Photo");
+
+    if (openAddPhotoViewListener) {
+        openAddPhotoViewListener.removeEventListener('click', showAddPhotoView);
+    }
+    if (prevBtnPhotoViewListener) {
+        prevBtnPhotoViewListener.removeEventListener('click', showGalleryView);
+    }
+    if (jsModalCloseListener) {
+        jsModalCloseListener.removeEventListener('click', closeModal);
+    }
+    if (jsModalStopListener) {
+        jsModalStopListener.removeEventListener('click', stopPropagation);
+    }
+    if (imageUploadListener) {
+        imageUploadListener.removeEventListener('change', previewImage);
+    }
+    if (btnSendPhotoListener) {
+        btnSendPhotoListener.removeEventListener('click', sendImageClick);
+    }
+
+    modal.querySelectorAll('.modal-photos .fa-trash-can').forEach(trashIcone => {
+        trashIcone.removeEventListener('click', trashIconeClick);
+    });
+
+    modal.removeEventListener('click', closeModal);
+    console.log("les écouteurs sont supprimés");
+}
+
+/**
+ * Appel addImage() et rafraîchit dynamiquement la page sans la recharger
+ * @param {*} event 
+ */
+async function sendImageClick(event) {
+    event.preventDefault();
+    await addImage(event);
+    await showProjets(await getAllWorks());
+    await loadImgModal();
+}
+
+/**
+ * Fonction pour gérer la fermeture de la modale avec la touche Escape
+ * @param {*} event 
+ */
+export function handleEscapeKey(event) {
+    if ((event.key === "Escape" || event.key === "Esc") && modal) {
+        event.preventDefault(); // Empêche d'autres actions par défaut liées à la touche Escape
+        closeModal(event);
+
+        // Supprimer l'écouteur 'keydown' une fois que la modale est fermée
+        window.removeEventListener('keydown', handleEscapeKey);
     }
 }
