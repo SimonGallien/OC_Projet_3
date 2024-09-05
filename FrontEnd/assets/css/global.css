@@ -72,7 +72,7 @@ body {
 	display: flex;
     flex-direction: column;
     justify-content: space-between;
-	max-width: 1440px;
+	/* max-width: 1440px; */
 	margin:auto;
 	font-family: 'Work Sans' ;
 	font-size: 14px;
@@ -87,20 +87,6 @@ p {
 /**************************/
 /******* LES TITRES *******/
 /**************************/
-
-h1 {
-	display: flex;
-	flex-direction: column;
-	font-family: 'Syne';
-	font-size: 22px;
-	font-weight: 800;
-	color: var(--main-h1-color);
-}
-
-h1 > span {
-	font-size:10px;
-	letter-spacing: 0.1em;
-}
 
 h2{
 	font-family: 'Syne';
@@ -193,29 +179,99 @@ a:visited, a:active {
 /**************************/
 /********* HEADER *********/
 /**************************/
+/* Général */
+.header-placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	align-content: center;
+}
 
 header {
 	display: flex;
 	justify-content: space-between;
-	margin-left: 150px;
-	margin-right: 150px;
+	max-width: 1660px;
+	margin: auto;
+	padding-left: 150px;
+	padding-right: 150px;
 	margin-top: 50px;
+	gap:10px;
 }
 
+.header-titre-menu {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+/* Style du titre */
+h1 {
+	display: flex;
+	flex-direction: column;
+	font-family: 'Syne';
+	font-size: 22px;
+	font-weight: 800;
+	color: var(--main-h1-color);
+}
+
+h1 > span {
+	font-size:10px;
+	letter-spacing: 0.1em;
+}
+
+/* Réseaux sociaux */
+.logo-social {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.logo-social img {
+    height: 40px;
+    width: 40px;
+	display: flex;
+	justify-content: center;
+}
+
+/* Menu toggle - Hamburger */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    margin-right: 20px;
+	padding: 15px;
+	border-radius: 50%;
+}
+
+.menu-toggle .bar {
+    height: 4px;
+    width: 25px;
+    background-color: black;
+    margin: 3px 0;
+    border-radius: 2px;
+}
+
+/* Style du menu de navigation */
 nav ul {
 	display: flex;
 	align-items: center;
 	list-style-type: none;
+	gap:10px;
 }
 
-nav li {
-	padding: 0 10px;
+nav ul li {
+	/* padding: 0 10px; */
 	font-size: 1.2em;
 }
 
 li:hover {
 	color: var(--main-h1-color);
 }
+
+
+
+
 
 /**************************/
 /********* FOOTER *********/
@@ -229,4 +285,67 @@ footer {
 	justify-content: flex-end;
 	align-items: center;
 	background-color: white;
+}
+
+/******************************/
+/********* RESPONSIVE *********/
+/******************************/
+
+/* 1er breakpoint à 1024px */
+
+/**************************/
+/********* HEADER *********/
+/**************************/
+/* Menu humburger à gauche du titre h1 et logo réseaux sociaux à droite */
+/* Affichage du menu hamburger sur les petits écrans (moins de 1024px) */
+@media (max-width: 1024px) {
+	/* Affichage du menu hamburger */
+	header {
+		padding-left: 40px;
+		padding-right: 40px;
+	}
+	/* Style pour cacher le menu en mobile */
+	nav ul {
+		display: none;
+	} 
+    .menu-toggle {
+        display: flex;
+    }
+
+    /* Réorganisation du titre et du menu */
+    .header-titre-menu {
+        flex-direction: row;
+		justify-content: flex-start;
+    }
+
+    header h1 {
+        order: 2; /* Mettre le titre après le hamburger */
+        margin-left: 10px;
+    }
+
+    .menu-toggle {
+        order: 1; /* Placer le hamburger en premier */
+    }
+
+	.menu-toggle:hover{
+        order: 1; /* Placer le hamburger en premier */
+		background-color: var(--modal-addPhoto-color-icone);
+    }
+
+    /* Réaffichage du menu au clic */
+    nav ul.show {
+        display: flex;
+        flex-direction: row;
+        position: absolute;
+        top: 150px;
+        left: 55px;
+        width: 100%;
+		gap:50px;
+    }
+
+    /* Style pour les éléments de menu en mobile */
+    nav ul li {
+        margin: 15px 0;
+        text-align: center;
+    }
 }

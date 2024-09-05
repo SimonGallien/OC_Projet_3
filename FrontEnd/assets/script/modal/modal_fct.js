@@ -103,17 +103,15 @@ export function closeModal (){
     
         // Réinitialise la vue de la modale pour la prochaine ouverture
         showGalleryView();
+
         // Réinitialiser le formulaire et masquer la prévisualisation de l'image
         const myForm = document.getElementById('uploadForm');
         const preview = document.getElementById('imagePreview');
-
         // Réinitialiser le formulaire
         myForm.reset();
-
         // Réinitialiser l'image de prévisualisation
         preview.src = '';
         preview.style.display = 'none';
-
         // Réafficher les icônes et textes cachés
         document.querySelector('.fa-image').style.display = 'block';
         document.querySelector('.modal-form-txt').style.display = 'block';

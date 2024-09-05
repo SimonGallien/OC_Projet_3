@@ -27,3 +27,8 @@ const btnLogout = document.querySelector("#btn-logout");
 btnLogout.addEventListener('click', () => {
         seDeconnecter();
 });
+
+document.getElementById('menu-toggle').addEventListener('click', function() {
+    const navLinks = document.querySelector('nav ul');
+    navLinks.classList.toggle('show'); // Bascule l'affichage du menu en mobile
+});

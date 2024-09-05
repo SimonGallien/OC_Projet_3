@@ -9,16 +9,19 @@
 	gap: 10px;
 }
 
-section {
+/* section {
 	margin-left:245px;
 	margin-right:245px;
-}
+} */
 
 #introduction {
 	display: flex;
-	justify-content: space-between;
+	justify-content: center;
+	gap:50px;
 	margin-top: 150px;
 	margin-bottom: 150px;
+	padding-left: 40px;
+	padding-right: 40px;
 }
 
 #introduction img {
@@ -29,8 +32,7 @@ section {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	padding-left: 72px;
-	max-width: 42%;
+	max-width: 400px;
 }
 
 #introduction h2 {
@@ -42,10 +44,14 @@ section {
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-column-gap: 17px;
 	grid-row-gap: 17px;
+	max-width: 1440px;
+	margin: auto;
 }
 
 #portfolio {
 	margin-bottom: 55px;
+	padding-left: 40px;
+	padding-right: 40px;;
 }
 
 .filters {
