@@ -1,49 +1,72 @@
-<aside id="modal1" class="modal" role="dialog" aria-labelledby="title-modal" aria-hidden="true">
-    <div class="modal-wrapper js-modal-stop">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>Sophie Bluel - Architecte d'intérieur</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
+	<meta name="description" content="">
+	<link rel="stylesheet" href="./assets/css/global.css">
+	<link rel="stylesheet" href="./assets/css/modal.css">
+	<script src="https://kit.fontawesome.com/5d6dcc7e2f.js" crossorigin="anonymous"></script>
+	<script type="module" src="./assets/script/modal/modal.js" defer></script>
+</head>
 
-        <div class="icone-modal">
-            <button id="btn-xmark-close" class="js-modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <button id="prevBtn-photoView" style="display: none;"><i class="fa-solid fa-arrow-left"></i></button>
-        </div>
-
-        <!-- Vue Galerie photo -->
-        <div id="galleryView">
-            <h2 id="title-modal">Galerie photo</h2>
-            <div class="modal-photos">
-                <!-- Les photos seront insérées ici dynamiquement -->
+<body>
+    <main>
+        <aside id="modal1" class="modal" role="dialog" aria-labelledby="title-modal" aria-hidden="true">
+            <div class="modal-wrapper js-modal-stop">
+        
+                <div class="icone-modal">
+                    <button id="btn-xmark-close" class="js-modal-close"><i class="fa-solid fa-xmark"></i></button>
+                    <button id="prevBtn-photoView" style="display: none;"><i class="fa-solid fa-arrow-left"></i></button>
+                </div>
+        
+                <!-- Vue Galerie photo -->
+                <div id="galleryView">
+                    <h2 id="title-modal">Galerie photo</h2>
+                    <div class="modal-photos">
+                        <!-- Les photos seront insérées ici dynamiquement -->
+                    </div>
+                    <!-- <input type="button" value="Ajouter une photo">  -->
+                    <input type="button" id="openAddPhotoView" class="js-modal" value="Ajouter une photo">
+                </div>
+        
+                <!-- Vue Ajout photo -->
+                <div id="addPhotoView" style="display: none;">
+                    <h2 id="title-modal">Ajout photo</h2>
+        
+                    <form class="modal-form" id="uploadForm" name="fileinfo" enctype="multipart/form-data" >
+                        <!-- Boîte + Ajouter photo -->
+                         <label for="imageUpload" class="custom-file-upload">
+                            <i class="fa-regular fa-image"></i> 
+                            <p class="modal-form-txt">+ Ajouter photo</p>
+                            <!-- Prévisualisation de l'image -->
+                            <img id="imagePreview" src="" alt="Prévisualisation de l'image" style="display:none; max-width: 50%; height: auto;"/>
+                            <input 
+                                type="file" 
+                                name="image"
+                                id="imageUpload" 
+                                accept="image/png, image/jpeg" />
+                            <p class="modal-form-txtFormat">jpeg, png : 4mo max</p>
+                         </label>
+        
+                        <label for="title">Titre</label>
+                        <input type="text" id="title" name="title"/>
+        
+                        <label for="category">Catégorie</label>
+                        <select id="category" name="category">
+                            <!-- Option générer dynamiquement -->
+                        </select>
+                        <input class="btn-Send-Photo" type="submit" value="Valider">
+                    </form> 
+                </div>
             </div>
-            <!-- <input type="button" value="Ajouter une photo">  -->
-            <input type="button" id="openAddPhotoView" class="js-modal" value="Ajouter une photo">
-        </div>
+        </aside>
+    </main>
+</body>
+</html>
 
-        <!-- Vue Ajout photo -->
-        <div id="addPhotoView" style="display: none;">
-            <h2 id="title-modal">Ajout photo</h2>
 
-            <form class="modal-form" id="uploadForm" name="fileinfo" enctype="multipart/form-data" >
-                <!-- Boîte + Ajouter photo -->
-                 <label for="imageUpload" class="custom-file-upload">
-                    <i class="fa-regular fa-image"></i> 
-                    <p class="modal-form-txt">+ Ajouter photo</p>
-                    <!-- Prévisualisation de l'image -->
-                    <img id="imagePreview" src="" alt="Prévisualisation de l'image" style="display:none; max-width: 50%; height: auto;"/>
-                    <input 
-                        type="file" 
-                        name="image"
-                        id="imageUpload" 
-                        accept="image/png, image/jpeg" />
-                    <p class="modal-form-txtFormat">jpeg, png : 4mo max</p>
-                 </label>
-
-                <label for="title">Titre</label>
-                <input type="text" id="title" name="title"/>
-
-                <label for="category">Catégorie</label>
-                <select id="category" name="category">
-                    <!-- Option générer dynamiquement -->
-                </select>
-                <input class="btn-Send-Photo" type="submit" value="Valider">
-            </form> 
-        </div>
-    </div>
-</aside>

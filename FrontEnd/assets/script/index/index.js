@@ -2,7 +2,7 @@ import {getAllWorks, getCategories, showProjets, createBtnFilters, filterByCateg
     
 // Appelle des fonction pour récupérer les projets, les affichers et créer les btn de filtres
 const listProjets = await getAllWorks();
-const listCategories = await getCategories();
+export const listCategories = await getCategories();
 
 await showProjets(listProjets);
 
