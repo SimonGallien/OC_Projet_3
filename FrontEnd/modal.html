@@ -49,15 +49,16 @@
                                 type="file" 
                                 name="image"
                                 id="imageUpload" 
-                                accept="image/png, image/jpeg" />
+                                accept="image/png, image/jpeg" required/>
                             <p class="modal-form-txtFormat">jpeg, png : 4mo max</p>
                          </label>
         
                         <label for="title">Titre</label>
-                        <input type="text" id="title" name="title"/>
+                        <input type="text" id="title" name="title" required/>
         
                         <label for="category">Catégorie</label>
-                        <select id="category" name="category">
+                        <select id="category" name="category" required>
+                            <option value="" disabled selected>Choisissez une catégorie</option>
                             <!-- Option générer dynamiquement -->
                         </select>
                         <input class="btn-Send-Photo" type="submit" value="Valider">

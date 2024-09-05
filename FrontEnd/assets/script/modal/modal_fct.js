@@ -103,7 +103,22 @@ export function closeModal (){
     
         // Réinitialise la vue de la modale pour la prochaine ouverture
         showGalleryView();
-    
+        // Réinitialiser le formulaire et masquer la prévisualisation de l'image
+        const myForm = document.getElementById('uploadForm');
+        const preview = document.getElementById('imagePreview');
+
+        // Réinitialiser le formulaire
+        myForm.reset();
+
+        // Réinitialiser l'image de prévisualisation
+        preview.src = '';
+        preview.style.display = 'none';
+
+        // Réafficher les icônes et textes cachés
+        document.querySelector('.fa-image').style.display = 'block';
+        document.querySelector('.modal-form-txt').style.display = 'block';
+        document.querySelector('.modal-form-txtFormat').style.display = 'block';
+        
         modal = null;
 
     } catch (error) {
@@ -329,7 +344,6 @@ export async function addImage(event){
  */
 export function previewImage(event) {
     try {
-        console.log("Changement de photo détectée previewImage");
         const file = event.target.files[0]; // Récupère le premier fichier sélectionné
         const preview = modal.querySelector('#imagePreview');
         if (file) {
@@ -403,7 +417,6 @@ function removeEventListeners() {
         });
     
         modal.removeEventListener('click', closeModal);
-        console.log("les écouteurs sont supprimés");
     } catch (error){
         console.error('Erreur lors de la suppression des écouteurs :', error);
     }
