@@ -325,98 +325,89 @@ export async function addImage(event){
 
 /**
  * Affiche l'image en preview dans le formulaire
- * @param {*} event 
+ * @param {event}  : détecte le changement d'image dans l'input image du formulaire
  */
 export function previewImage(event) {
-    console.log("Changement de photo détectée previewImage");
-    const file = event.target.files[0]; // Récupère le premier fichier sélectionné
-    const preview = modal.querySelector('#imagePreview');
-    if (file) {
-
-        modal.querySelector('.fa-image').style.display = 'none';
-        modal.querySelector('.modal-form-txt').style.display = 'none';
-        modal.querySelector('.modal-form-txtFormat').style.display = 'none';
-
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            preview.src = event.target.result; // Définir la source de l'image comme le résultat de la lecture
-            preview.style.display = 'block'; // Affiche l'image
-        };
-
-        reader.readAsDataURL(file); // Lire le fichier comme une URL de données
-    } else {
-        preview.style.display = 'none'; // Cache l'image si aucun fichier n'est sélectionné
-        console.error("Pas d'image sélectionné");
+    try {
+        console.log("Changement de photo détectée previewImage");
+        const file = event.target.files[0]; // Récupère le premier fichier sélectionné
+        const preview = modal.querySelector('#imagePreview');
+        if (file) {
+    
+            modal.querySelector('.fa-image').style.display = 'none';
+            modal.querySelector('.modal-form-txt').style.display = 'none';
+            modal.querySelector('.modal-form-txtFormat').style.display = 'none';
+    
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                preview.src = event.target.result; // Définir la source de l'image comme le résultat de la lecture
+                preview.style.display = 'block'; // Affiche l'image
+            };
+    
+            reader.readAsDataURL(file); // Lire le fichier comme une URL de données
+        } else {
+            preview.style.display = 'none'; // Cache l'image si aucun fichier n'est sélectionné
+            console.error("Pas d'image sélectionné");
+        }
+    }catch (error){
+        console.error('Erreur de prévisualisation de l\'image:', error);
     }
+
 }
 
 // Ajout des écouteurs d'événements
 export function addEventListeners() {
-    const openAddPhotoViewListener = modal.querySelector('#openAddPhotoView');
-    const prevBtnPhotoViewListener = modal.querySelector('#prevBtn-photoView');
-    const jsModalCloseListener = modal.querySelector(".js-modal-close");
-    const jsModalStopListener = modal.querySelector(".js-modal-stop");
-    const imageUploadListener = modal.querySelector("#imageUpload"); 
-    const btnSendPhotoListener = modal.querySelector(".btn-Send-Photo");
-
-    if (openAddPhotoViewListener) {
+    try {
+        const openAddPhotoViewListener = modal.querySelector('#openAddPhotoView');
+        const prevBtnPhotoViewListener = modal.querySelector('#prevBtn-photoView');
+        const jsModalCloseListener = modal.querySelector(".js-modal-close");
+        const jsModalStopListener = modal.querySelector(".js-modal-stop");
+        const imageUploadListener = modal.querySelector("#imageUpload"); 
+        const btnSendPhotoListener = modal.querySelector(".btn-Send-Photo");
+    
         openAddPhotoViewListener.addEventListener('click', showAddPhotoView);
-    }
-    if (prevBtnPhotoViewListener) {
         prevBtnPhotoViewListener.addEventListener('click', showGalleryView);
-    }
-    if (jsModalCloseListener) {
         jsModalCloseListener.addEventListener('click', closeModal);
-    }
-    if (jsModalStopListener) {
         jsModalStopListener.addEventListener('click', stopPropagation);
-    }
-    if (imageUploadListener) {
         imageUploadListener.addEventListener('change', previewImage);
-    }
-    if (btnSendPhotoListener) {
         btnSendPhotoListener.addEventListener('click', addImage);
+    
+        // Ajout de l'écouteur de clic pour fermer la modale
+        modal.addEventListener('click', closeModal);
+    } catch (error){
+        console.error('Erreur lors des ajouts des écouteurs :', error);
     }
-    // Ajout de l'écouteur de clic pour fermer la modale
-    modal.addEventListener('click', closeModal);
 }
 
 /**
  * Suppression des écouteurs d'événements
  */
 function removeEventListeners() {
-    const openAddPhotoViewListener = modal.querySelector('#openAddPhotoView');
-    const prevBtnPhotoViewListener = modal.querySelector('#prevBtn-photoView');
-    const jsModalCloseListener = modal.querySelector(".js-modal-close");
-    const jsModalStopListener = modal.querySelector(".js-modal-stop");
-    const imageUploadListener = modal.querySelector("#imageUpload"); 
-    const btnSendPhotoListener = modal.querySelector(".btn-Send-Photo");
-
-    if (openAddPhotoViewListener) {
+    try {
+        const openAddPhotoViewListener = modal.querySelector('#openAddPhotoView');
+        const prevBtnPhotoViewListener = modal.querySelector('#prevBtn-photoView');
+        const jsModalCloseListener = modal.querySelector(".js-modal-close");
+        const jsModalStopListener = modal.querySelector(".js-modal-stop");
+        const imageUploadListener = modal.querySelector("#imageUpload"); 
+        const btnSendPhotoListener = modal.querySelector(".btn-Send-Photo");
+    
         openAddPhotoViewListener.removeEventListener('click', showAddPhotoView);
-    }
-    if (prevBtnPhotoViewListener) {
         prevBtnPhotoViewListener.removeEventListener('click', showGalleryView);
-    }
-    if (jsModalCloseListener) {
         jsModalCloseListener.removeEventListener('click', closeModal);
-    }
-    if (jsModalStopListener) {
         jsModalStopListener.removeEventListener('click', stopPropagation);
-    }
-    if (imageUploadListener) {
         imageUploadListener.removeEventListener('change', previewImage);
-    }
-    if (btnSendPhotoListener) {
         btnSendPhotoListener.removeEventListener('click', addImage);
+        
+        modal.querySelectorAll('.modal-photos .fa-trash-can').forEach(trashIcone => {
+            trashIcone.removeEventListener('click', deleteImage);
+        });
+    
+        modal.removeEventListener('click', closeModal);
+        console.log("les écouteurs sont supprimés");
+    } catch (error){
+        console.error('Erreur lors de la suppression des écouteurs :', error);
     }
 
-    modal.querySelectorAll('.modal-photos .fa-trash-can').forEach(trashIcone => {
-        trashIcone.removeEventListener('click', deleteImage);
-    });
-
-    modal.removeEventListener('click', closeModal);
-    console.log("les écouteurs sont supprimés");
 }
 
 /**
