@@ -72,12 +72,19 @@ body {
 	display: flex;
     flex-direction: column;
     justify-content: space-between;
+	align-items: center;
 	/* max-width: 1440px; */
 	margin:auto;
 	font-family: 'Work Sans' ;
 	font-size: 14px;
 	min-height: 100vh;
 	background-color: var(--main-background-color);
+}
+
+main {
+	display: flex;
+	flex-direction: column;
+	max-width: 1440px;
 }
 
 p {
@@ -180,29 +187,41 @@ a:visited, a:active {
 /********* HEADER *********/
 /**************************/
 /* Général */
-.header-placeholder {
+header {
+	width: 100%;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
-	justify-content: center;
-	align-content: center;
 }
 
-header {
+#edit-header {
+	width: 100%;
+	color:white;
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 59px;
+	font-size: 16px;
+}
+
+.header-global {
 	display: flex;
 	justify-content: space-between;
-	max-width: 1660px;
-	margin: auto;
-	padding-left: 150px;
-	padding-right: 150px;
+	max-width: 1440px;
+	width: 100%;
 	margin-top: 50px;
-	gap:10px;
+	height: 42px;
+	gap:47px;
 }
 
 .header-titre-menu {
 	width: 100%;
 	display: flex;
+	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
+	margin-left: 150px;
 }
 
 /* Style du titre */
@@ -222,16 +241,21 @@ h1 > span {
 
 /* Réseaux sociaux */
 .logo-social {
+	margin-right: 150px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
-.logo-social img {
-    height: 40px;
-    width: 40px;
-	display: flex;
-	justify-content: center;
+.logo-social a{
+	width: 22px;
+	height: 22px;
+	text-align: center;
+}
+
+.logo-social i {
+	color: black;
+	font-size: 22px;
 }
 
 /* Menu toggle - Hamburger */
@@ -257,21 +281,24 @@ nav ul {
 	display: flex;
 	align-items: center;
 	list-style-type: none;
-	gap:10px;
 }
 
 nav ul li {
-	/* padding: 0 10px; */
-	font-size: 1.2em;
+	font-size: 19px;
+}
+
+nav ul li+li {
+	margin-left: 41px; /* Écart par défaut entre chaque li */
+}
+
+/* Ajustement spécifique entre "contact" et "login/logout" */
+#btn-login, #btn-logout {
+    margin-left: 44px; /* Spécifie l'écart plus grand ici */
 }
 
 li:hover {
 	color: var(--main-h1-color);
 }
-
-
-
-
 
 /**************************/
 /********* FOOTER *********/
@@ -299,36 +326,46 @@ footer {
 /* Menu humburger à gauche du titre h1 et logo réseaux sociaux à droite */
 /* Affichage du menu hamburger sur les petits écrans (moins de 1024px) */
 @media (max-width: 1024px) {
-	/* Affichage du menu hamburger */
-	header {
-		padding-left: 40px;
-		padding-right: 40px;
+
+	.header-titre-menu {
+		margin-left: 60px;
 	}
-	/* Style pour cacher le menu en mobile */
+
+	.logo-social {
+		margin-right: 60px;
+	}
+}
+
+@media (max-width: 768px) {
+/* Enlever les margin et padding sur les bords */
+	h2 {
+		text-align: center;
+	}
+
+	#contact form {
+		max-width: 70%;
+	}
+
+	.logo-social {
+		margin-right: 20px;
+	}
+
+	/* Réorganisation du titre et du menu */
+	.header-titre-menu {
+		flex-direction: row-reverse;
+		justify-content: left;
+		margin-left: 20px;
+	}
+
 	nav ul {
 		display: none;
 	} 
+
     .menu-toggle {
         display: flex;
     }
 
-    /* Réorganisation du titre et du menu */
-    .header-titre-menu {
-        flex-direction: row;
-		justify-content: flex-start;
-    }
-
-    header h1 {
-        order: 2; /* Mettre le titre après le hamburger */
-        margin-left: 10px;
-    }
-
-    .menu-toggle {
-        order: 1; /* Placer le hamburger en premier */
-    }
-
 	.menu-toggle:hover{
-        order: 1; /* Placer le hamburger en premier */
 		background-color: var(--modal-addPhoto-color-icone);
     }
 
@@ -340,12 +377,7 @@ footer {
         top: 150px;
         left: 55px;
         width: 100%;
-		gap:50px;
+		/* gap:50px; */
     }
-
-    /* Style pour les éléments de menu en mobile */
-    nav ul li {
-        margin: 15px 0;
-        text-align: center;
-    }
+/* Soit mettre aricle au dessus ou en dessous de la photo, soit cacher photo*/
 }

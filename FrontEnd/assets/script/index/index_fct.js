@@ -176,7 +176,8 @@ export function checkAuthentification() {
             liFilters: document.querySelector(".filters"),
             btnLogout: document.querySelector("#btn-logout"),
             lienEdit: document.querySelector("#link-edit"),
-            editHeader: document.querySelector("#edit-header")
+            editHeader: document.querySelector("#edit-header"),
+            editGlobal: document.querySelector(".header-global")
         }
     
         // Si le token n'existe pas, on arrête l'exécution de la fonction
@@ -194,9 +195,11 @@ export function checkAuthentification() {
         // Afficher les boutons d'action du site, déjà dans le code HTML avec display:none
         elements.lienEdit.style.display = 'inherit';
         elements.editHeader.style.display = 'inherit';
+        elements.editGlobal.style.marginTop = '38px';
         elements.btnLogin.style.display = 'none';
         elements.btnLogout.style.display = 'inherit';
         elements.liFilters.style.display = 'none';
+
     } catch (error){
         console.error('Impossible de vérifier si l\'utilisateur est connecté : ', error);
     }

@@ -1,38 +1,34 @@
-#edit-header {
-	color:white;
-	background-color: black;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 60px;
-	font-size: 16px;
-	gap: 10px;
-}
-
 /* section {
 	margin-left:245px;
 	margin-right:245px;
 } */
 
+#introduction, #portfolio {
+	max-width: 950px;
+	margin-left:245px;
+	margin-right:245px;
+	margin: auto;
+}
+
 #introduction {
 	display: flex;
 	justify-content: center;
-	gap:50px;
+	gap:72px;
 	margin-top: 150px;
 	margin-bottom: 150px;
-	padding-left: 40px;
-	padding-right: 40px;
+	
 }
 
 #introduction img {
 	height: 355px;
+	/* max-width: 474px; */
 }
 
 #introduction article {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	max-width: 400px;
+	max-width: 404px;
 }
 
 #introduction h2 {
@@ -44,14 +40,10 @@
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-column-gap: 17px;
 	grid-row-gap: 17px;
-	max-width: 1440px;
-	margin: auto;
 }
 
 #portfolio {
 	margin-bottom: 55px;
-	padding-left: 40px;
-	padding-right: 40px;;
 }
 
 .filters {
@@ -117,3 +109,61 @@
 #contact p {
 	margin-top: 9px;
 }
+
+
+/******************************/
+/********* RESPONSIVE *********/
+/******************************/
+@media (max-width: 1024px) {
+	/* Enlever les margin et padding sur les bords */
+	#introduction {
+		/* display: flex;
+		justify-content: center;
+		gap:50px;
+		margin-top: 150px;
+		margin-bottom: 150px; */
+		padding-left: 5px;
+		padding-right: 5px;
+		gap:10px;
+	}
+}
+
+
+@media (max-width: 768px) {
+	/* Enlever les margin et padding sur les bords */
+	#introduction {
+		flex-direction: column;
+		align-items: center;
+		width: 100%;
+		gap:30px;
+	}
+
+	#introduction article {
+		max-width: 90%;
+	}
+
+	#introduction img {
+		height: 200px;
+	}
+
+	.filters {
+		flex-wrap: wrap;
+	}
+
+	.filters button {
+		width: 60%;
+	}
+	
+	#portfolio {
+		padding-left: 5px;
+		padding-right: 5px;;
+	}
+
+	.gallery {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-column-gap: 5px;
+		grid-row-gap: 5px;
+	}
+	/* Soit mettre aricle au dessus ou en dessous de la photo, soit cacher photo*/
+	}
