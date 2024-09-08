@@ -257,6 +257,11 @@ margin :0;
 	.modal-photos {
 		grid-template-columns: repeat(4, 1fr);
 	}
+
+	#addPhotoView {
+		padding-left: 30px;
+		padding-right: 30px;
+	}
 }
 
 @media (max-width: 480px) {
@@ -289,5 +294,10 @@ margin :0;
 	.modal-bar {
 		margin-top: 34px;
 		margin-bottom: 19px;
+	}
+
+	#addPhotoView {
+		padding-left: 10px;
+		padding-right: 10px;
 	}
 }
