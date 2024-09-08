@@ -42,9 +42,11 @@ export async function login(event){
                 break
             case 401:
                 console.error("Not Authorized");
+                document.querySelector('.messageError').style.display = "flex";
                 break
             case 404:
                 console.error("User not found");
+                document.querySelector('.messageError').style.display = "flex";
                 break
             default:
                 console.error(`Erreur inattendue : ${response.status}`);

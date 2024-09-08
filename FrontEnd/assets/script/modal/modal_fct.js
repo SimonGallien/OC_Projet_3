@@ -488,6 +488,9 @@ function checkFormCompletion(form) {
             // Vérifie si le fichier est vide ou non
             if (value.size === 0) {
                 allFilled = false;
+            } else if (value.size > 4 * 1024 * 1024) {
+                allFilled = false;
+                alert('L\'image sélectionnée dépasse 4 Mo. Veuillez sélectionner une image plus petite.');
             }
         }
     });
