@@ -14,5 +14,3 @@ loginForm.addEventListener("submit", function (event) {
     event.preventDefault();
     login(event);
 });
-
-

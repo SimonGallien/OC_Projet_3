@@ -69,7 +69,7 @@ export async function getCategories() {
 export async function genererHeader(){
     try {
         // Charger le header
-        await fetch('header.html')
+        await fetch('../partials/header.html')
         .then(response => response.text())
         .then(data => {
             document.getElementById('header-placeholder').innerHTML = data;
@@ -85,7 +85,7 @@ export async function genererHeader(){
 export async function genererFooter(){
     try {
         // Charger le footer
-        fetch('footer.html')
+        fetch('../partials/footer.html')
         .then(response => response.text())
         .then(data => {
             document.getElementById('footer-placeholder').innerHTML = data;

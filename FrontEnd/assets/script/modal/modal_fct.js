@@ -35,7 +35,7 @@ export async function openModal (event) {
         // Si la modale n'est pas dans le DOM, la charger dynamiquement  
         if (!modal) {
             // Charger le contenu de modal.html avec fetch
-            const response = await fetch(url);
+            const response = await fetch(`../partials/${url}`);
     
             // Vérifier si la réponse est correcte
             if (!response.ok) {
