@@ -177,7 +177,8 @@ export function checkAuthentification() {
             btnLogout: document.querySelector("#btn-logout"),
             lienEdit: document.querySelector("#link-edit"),
             editHeader: document.querySelector("#edit-header"),
-            editGlobal: document.querySelector(".header-global")
+            editGlobal: document.querySelector(".header-global"),
+            portfolioTitle: document.querySelector("#portfolioTitle")
         }
     
         // Si le token n'existe pas, on arrête l'exécution de la fonction
@@ -199,6 +200,7 @@ export function checkAuthentification() {
         elements.btnLogin.style.display = 'none';
         elements.btnLogout.style.display = 'inherit';
         elements.liFilters.style.display = 'none';
+        elements.portfolioTitle.style.marginBottom = "92px";
 
     } catch (error){
         console.error('Impossible de vérifier si l\'utilisateur est connecté : ', error);

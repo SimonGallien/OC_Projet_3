@@ -2,11 +2,9 @@
 /*** AFFICHAGE DE LA MODALE ***/
 /******************************/
 .modal-wrapper {
-	overflow: auto; /* une scroll barre apparaît si le contenu déborde */
-	width: 50%;
-	max-width: calc(100vw - 20px); /*100vh 1 x la largeur de l'écran*/
-	max-height: calc(100vh - 20px); /*100vh 1 x la hauteur de l'écran*/
-	padding: 20px;
+	width: 630px;
+	/* max-width: calc(100vw - 20px); 100vh 1 x la largeur de l'écran */
+	/* max-height: calc(100vh - 20px); 100vh 1 x la hauteur de l'écran */
 	background: white;
     display: flex;
     flex-direction: column;
@@ -32,39 +30,66 @@
 /******************************/
 
 /* CSS en commun */
-#galleryView, #addPhotoView {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-}
 
-.icone-modal {
+/* class utilisé à l'ouverture de la modale */
+.icone-modal-deleteView {
+	box-sizing: border-box;
+	display: flex;
+	width: 100%;
+	justify-content: flex-end;
+	padding-top: 51px;
+	padding-right: 54px;
+	padding-bottom: 10px;
+}
+/* class utilisé à l'ouverture de la 2eme vue modale ajouter photo */
+.icone-modal-addView {
+	box-sizing: border-box;
 	display: flex;
 	flex-direction: row-reverse;
 	justify-content: space-between;
 	width: 100%;
+	padding-top: 26px;
+	padding-right: 30px;
+	padding-left: 30px;
+	padding-bottom: 10px;
 }
 
 #btn-xmark-close, #prevBtn-photoView{
     background-color: white;
     border: none;
+	padding: 0;
+	margin: 0;
 }
 
-#title-modal {
+#title-modal-gallery {
     color : black;
 	text-align: center;  
+	font-size: 26px;
 }
 
 /* CSS de la partie Galerie photo */
+#galleryView {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	padding-left: 80px;
+	padding-right: 125px;
+	padding-bottom: 20px;
+}
+
 .modal-photos {
 	position: relative;
-	margin-top: 20px;
+	margin-top: 46px;
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-	gap : 10px;
-	width: 80%;
+	grid-template-columns: repeat(5, 1fr);
+	grid-column-gap: 10px;
+	grid-row-gap: 30px;
+	width: 100%;
+	max-height: 370px;
+	overflow: auto;
 }
 
 .modal-photos div {
@@ -74,25 +99,53 @@
 
 .modal-photos img {
 	width: 100%;
-	max-width: 100%; 
+	/* max-width: 100%;  */
 	display: block;
     height:auto;
 }
 
 .modal-photos a {
 	position: absolute;
-    top: 5%; /* Distance par rapport au haut de l'image */
-    right: 5%; /* Distance par rapport au côté droit de l'image */
+    top: 6px; /* Distance par rapport au haut de l'image */
+    right: 5px; /* Distance par rapport au côté droit de l'image */
     color: white;
-    font-size: 2vh;
-    z-index: 10;
-    background-color: rgba(0, 0, 0, 1); /* Optionnel : ajouter un fond pour l'icône */
-    padding: 0.5em;
+    width: 17px;
+	height: 17px;
+    background-color: rgba(0, 0, 0, 1);
     text-align: center;
-    cursor: pointer;
+	border-radius: 2px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.fa-trash-can {
+	font-size: 10px;
+	margin: 0;
+	padding: 0;
+}
+
+.modal-bar {
+	height: 1px;
+	background-color: var(--modal-bar-color);
+	margin-top: 68px;
+	margin-bottom: 38px;
+	width: 100%;
+}
+
+#openAddPhotoView {
+margin :0;
 }
 
 /* CSS de la partie Ajouter photo */
+#addPhotoView {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+}
+
 .modal-form {
 	display: flex;
 	flex-direction: column;

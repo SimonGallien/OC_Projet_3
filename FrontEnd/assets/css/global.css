@@ -62,6 +62,7 @@ table {
     --modal-addPhoto-backgroung:#E8F1F6;
     --modal-addPhoto-color-icone:#CBD6DC;
     --modal-addPhoto-color-txt:#306685;
+	--modal-bar-color: #B3B3B3;
 }
 
 /**************************/
@@ -73,17 +74,20 @@ body {
     flex-direction: column;
     justify-content: space-between;
 	align-items: center;
+	box-sizing: border-box;
 	/* max-width: 1440px; */
 	margin:auto;
 	font-family: 'Work Sans' ;
 	font-size: 14px;
 	min-height: 100vh;
 	background-color: var(--main-background-color);
+	min-width: 320px;
 }
 
 main {
 	display: flex;
 	flex-direction: column;
+	align-items: center;
 	max-width: 1440px;
 }
 
@@ -118,13 +122,16 @@ h2{
 
 form {
 	text-align: left;
-	/* margin-top:30px; */
+	margin-top:37px;
+	margin-bottom: 45px;
 	display: flex;
 	flex-direction: column;
-    width: 380px;
+    width: 379px;
+	align-items: center;
 }
 
 input {
+	width: 100%;
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
@@ -132,27 +139,30 @@ input {
 }
 
 label {
-	margin: 2em 0 1em 0;
 	font-weight: 500;
 	color:var(--second-txt-color);
-	margin-top: 40px;
-	margin-bottom: 6px;
+	width: 100%;
+
+}
+
+label + input, label + textarea {
+	margin: 11px 0px 40px;
 }
 
 textarea {
 	border: none;
+	width: 100%;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
 input[type="submit"], input[type="button"]{
 	font-family: 'Syne';
-	font-weight: 700;
 	color: white;
 	background-color: var(--main-color);
-	margin : 2em auto ;
-	width: 180px;
-    height: 35px;
+	width: 179px;
+    height: 36px;
 	border-radius: 60px;
+	margin-top: 40px;
 }
 
 /**************************/
@@ -203,6 +213,7 @@ header {
 	align-items: center;
 	height: 59px;
 	font-size: 16px;
+	gap: 11.42px;
 }
 
 .header-global {
@@ -241,10 +252,11 @@ h1 > span {
 
 /* Réseaux sociaux */
 .logo-social {
-	margin-right: 150px;
+	
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	margin-right: 150px;
 }
 
 .logo-social a{
@@ -305,13 +317,19 @@ li:hover {
 /**************************/
 
 footer {
+	/* display: flex; */
 	width: 100%;
-	height: 50px;
-	font-weight: 300;
+	height: 60px;
+	background-color: white;
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
-	background-color: white;
+	border: 1px	solid	green;
+}
+
+footer ul {
+	max-width: 1440px;
+	margin-right: 107px;
 }
 
 /******************************/
@@ -334,6 +352,13 @@ footer {
 	.logo-social {
 		margin-right: 60px;
 	}
+
+	h1 {
+		font-size: 18px;
+	}
+	h2 {
+		font-size: 22px;
+	}
 }
 
 @media (max-width: 768px) {
@@ -347,14 +372,14 @@ footer {
 	}
 
 	.logo-social {
-		margin-right: 20px;
+		margin-right: 0px;
 	}
 
 	/* Réorganisation du titre et du menu */
 	.header-titre-menu {
 		flex-direction: row-reverse;
 		justify-content: left;
-		margin-left: 20px;
+		margin-left: 0px;
 	}
 
 	nav ul {
@@ -377,7 +402,28 @@ footer {
         top: 150px;
         left: 55px;
         width: 100%;
-		/* gap:50px; */
     }
-/* Soit mettre aricle au dessus ou en dessous de la photo, soit cacher photo*/
+}
+
+@media (max-width: 480px) {
+	form {
+		width: 100%;
+	}
+
+	#contact {
+		width: 100%;
+	}
+
+	h1 {
+		font-size: 16px;
+	}
+
+	h1 > span {
+		font-size:9px;
+		letter-spacing: 0.05em;
+	}
+
+	h2 {
+		font-size: 18px;
+	}
 }

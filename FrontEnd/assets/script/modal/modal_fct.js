@@ -198,6 +198,8 @@ export function showAddPhotoView () {
     modal.querySelector("#addPhotoView").style.display = null;
     // On récupère l'id du btn flèche qui sert à retourner à galleryPhoto
     modal.querySelector("#prevBtn-photoView").style.display = null;
+    document.getElementById('modalNav').classList.add('icone-modal-addView');
+    document.getElementById('modalNav').classList.remove('icone-modal-deleteView');
 }
 
 /**
@@ -210,6 +212,9 @@ export function showGalleryView () {
     modal.querySelector("#addPhotoView").style.display = "none";
     // On récupère l'id du btn flèche qui sert à retourner à galleryPhoto
     modal.querySelector("#prevBtn-photoView").style.display = "none";
+    document.getElementById('modalNav').classList.remove('icone-modal-addView');
+    document.getElementById('modalNav').classList.add('icone-modal-deleteView');
+
 }
 
 /**

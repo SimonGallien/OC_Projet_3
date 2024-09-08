@@ -19,18 +19,19 @@
         <aside id="modal1" class="modal" role="dialog" aria-labelledby="title-modal" aria-hidden="true">
             <div class="modal-wrapper js-modal-stop">
         
-                <div class="icone-modal">
+                <div id="modalNav" class="icone-modal-deleteView">
                     <button id="btn-xmark-close" class="js-modal-close"><i class="fa-solid fa-xmark"></i></button>
                     <button id="prevBtn-photoView" style="display: none;"><i class="fa-solid fa-arrow-left"></i></button>
                 </div>
         
                 <!-- Vue Galerie photo -->
                 <div id="galleryView">
-                    <h2 id="title-modal">Galerie photo</h2>
+                    <p id="title-modal-gallery">Galerie photo</p>
                     <div class="modal-photos">
                         <!-- Les photos seront insérées ici dynamiquement -->
                     </div>
                     <!-- <input type="button" value="Ajouter une photo">  -->
+                    <div class="modal-bar"></div>
                     <input type="button" id="openAddPhotoView" class="js-modal" value="Ajouter une photo">
                 </div>
         
