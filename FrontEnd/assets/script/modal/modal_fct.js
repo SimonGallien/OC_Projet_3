@@ -15,7 +15,14 @@ export async function openModal (event) {
     try{
         event.preventDefault();
         // Extraire l'URL cible de l'événement
-        const target = event.target.getAttribute('href');
+        let triggerElement = event.target; // L'élément qui a déclenché l'événement
+
+       // Si l'utilisateur clique sur l'icône, on remonte vers l'élément parent <a>
+        if (triggerElement.tagName === 'I') {
+            triggerElement = triggerElement.closest('a');
+        }
+            
+        const target = triggerElement.getAttribute('href');
         if (!target) {
             throw new Error("Aucun 'href' trouvé dans l'élément déclencheur.");
         }
@@ -65,16 +72,23 @@ export async function openModal (event) {
         
         // Charge le contenu dynamique du formulaire, liste des catégories
         const selectForm = modal.querySelector("#category");
-        listCategories.forEach (category => {
-            // Création d'éléments <options> ayant pour valeur le nom de catégorie
-            const option = document.createElement("option");
-            option.innerText = category.name;
-            option.value = category.id;
-            // Ajout des éléments <option> au DOM
-            selectForm.appendChild(option);
-        })
+        const existOption = modal.querySelectorAll("#category option");
+        console.log(existOption);
+        if (existOption.length <= 1){
+            listCategories.forEach (category => {
+                // Création d'éléments <options> ayant pour valeur le nom de catégorie
+                const option = document.createElement("option");
+                    option.innerText = category.name;
+                    option.value = category.id;
+                    // Ajout des éléments <option> au DOM
+                    selectForm.appendChild(option);
+            })
+        }
+
         // Ajout des écouteurs d'événements à chaque réouverture
         addEventListeners(); // Important : réattache les événements après chaque ouverture
+        const form = modal.querySelector('#uploadForm');
+        checkFormCompletion(form);  // Vérifier l'état du formulaire à l'ouverture
 
         // Ajout de l'écouteur pour fermer la modale avec la touche Escape
         window.addEventListener('keydown', handleEscapeKey);
@@ -107,15 +121,17 @@ export function closeModal (){
         // Réinitialiser le formulaire et masquer la prévisualisation de l'image
         const myForm = document.getElementById('uploadForm');
         const preview = document.getElementById('imagePreview');
+        const previewContainer = document.getElementById('divImagePreview');
         // Réinitialiser le formulaire
         myForm.reset();
         // Réinitialiser l'image de prévisualisation
         preview.src = '';
-        preview.style.display = 'none';
+        previewContainer.style.display = 'none';
         // Réafficher les icônes et textes cachés
         document.querySelector('.fa-image').style.display = 'block';
         document.querySelector('.modal-form-txt').style.display = 'block';
         document.querySelector('.modal-form-txtFormat').style.display = 'block';
+        modal.querySelector('#modalContainerPreviewTxt').style.display = 'flex';
         
         modal = null;
 
@@ -348,17 +364,16 @@ export async function addImage(event){
 export function previewImage(event) {
     try {
         const file = event.target.files[0]; // Récupère le premier fichier sélectionné
+        const previewContainer = modal.querySelector('#divImagePreview');
         const preview = modal.querySelector('#imagePreview');
         if (file) {
     
-            modal.querySelector('.fa-image').style.display = 'none';
-            modal.querySelector('.modal-form-txt').style.display = 'none';
-            modal.querySelector('.modal-form-txtFormat').style.display = 'none';
+            modal.querySelector('#modalContainerPreviewTxt').style.display = 'none';
     
             const reader = new FileReader();
             reader.onload = function(event) {
                 preview.src = event.target.result; // Définir la source de l'image comme le résultat de la lecture
-                preview.style.display = 'block'; // Affiche l'image
+                previewContainer.style.display = 'flex'; // Affiche l'image
             };
     
             reader.readAsDataURL(file); // Lire le fichier comme une URL de données
@@ -388,6 +403,15 @@ export function addEventListeners() {
         jsModalStopListener.addEventListener('click', stopPropagation);
         imageUploadListener.addEventListener('change', previewImage);
         btnSendPhotoListener.addEventListener('click', addImage);
+
+        const form = modal.querySelector('#uploadForm');
+        form.querySelectorAll('input[required],select').forEach(input => {
+            input.addEventListener('input', handleInput);
+            // `change` événement pour le champ select
+            if (input.tagName === 'SELECT') {
+                input.addEventListener('change', handleInput);
+            }
+        });
     
         // Ajout de l'écouteur de clic pour fermer la modale
         modal.addEventListener('click', closeModal);
@@ -418,12 +442,16 @@ function removeEventListeners() {
         modal.querySelectorAll('.modal-photos .fa-trash-can').forEach(trashIcone => {
             trashIcone.removeEventListener('click', deleteImage);
         });
+
+        const form = modal.querySelector('#uploadForm');
+        form.querySelectorAll('input[required]').forEach(input => {
+            input.removeEventListener('input', handleInput);
+        });
     
         modal.removeEventListener('click', closeModal);
     } catch (error){
         console.error('Erreur lors de la suppression des écouteurs :', error);
     }
-
 }
 
 /**
@@ -438,4 +466,45 @@ export function handleEscapeKey(event) {
         // Supprimer l'écouteur 'keydown' une fois que la modale est fermée
         window.removeEventListener('keydown', handleEscapeKey);
     }
+}
+
+// Fonction pour vérifier si tous les champs requis sont remplis
+function checkFormCompletion(form) {
+
+    // On récupère tout les champs du du formulaires
+    const formData = new FormData(form);
+    let allFilled = true;
+
+    // Parcourt les champs du formulaire via FormData
+    formData.forEach((value, key) => {
+        // Vérifie si la valeur est une chaîne de caractères avant d'utiliser trim()
+        if (typeof value === 'string') {
+            if (value.trim() === '') {
+                allFilled = false; // Si un champ est vide, on marque allFilled à false
+            }
+        } else if (value === null || value === '') {
+            allFilled = false; // Pour les autres types, on vérifie simplement s'ils sont vides ou nuls
+        } else if (key === 'image') {
+            // Vérifie si le fichier est vide ou non
+            if (value.size === 0) {
+                allFilled = false;
+            }
+        }
+    });
+
+    // Gérer l'état du bouton de soumission
+    const submitBtn = form.querySelector('input[type="submit"]');
+    submitBtn.disabled = !allFilled; 
+
+    // Si le bouton est activé (non désactivé), on supprime son background
+    if (allFilled) {
+        submitBtn.classList.add('enabled'); // Ajoute la classe pour enlever le background
+    } else {
+        submitBtn.classList.remove('enabled'); // Remet le background s'il est désactivé
+    }
+}
+
+// Fonction de rappel pour la vérification du formulaire
+function handleInput(event) {
+    checkFormCompletion(event.target.form); // Appelle la fonction de vérification du formulaire
 }

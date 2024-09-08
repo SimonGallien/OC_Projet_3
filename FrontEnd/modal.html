@@ -28,10 +28,9 @@
                 <div id="galleryView">
                     <p id="title-modal-gallery">Galerie photo</p>
                     <div class="modal-photos">
-                        <!-- Les photos seront insérées ici dynamiquement -->
+                        <!-- Les photos sont insérées ici dynamiquement -->
                     </div>
-                    <!-- <input type="button" value="Ajouter une photo">  -->
-                    <div class="modal-bar"></div>
+                    <div class="modal-bar" id="modalBarViewGallery"></div>
                     <input type="button" id="openAddPhotoView" class="js-modal" value="Ajouter une photo">
                 </div>
         
@@ -42,27 +41,36 @@
                     <form class="modal-form" id="uploadForm" name="fileinfo" enctype="multipart/form-data" >
                         <!-- Boîte + Ajouter photo -->
                          <label for="imageUpload" class="custom-file-upload">
-                            <i class="fa-regular fa-image"></i> 
-                            <p class="modal-form-txt">+ Ajouter photo</p>
+                            <div id="modalContainerPreviewTxt">
+                                <i class="fa-regular fa-image"></i> 
+                                <div id="modalContainerFormTxt"> 
+                                    <p class="modal-form-txt">+ Ajouter photo</p>
+                                </div>
+                                <p class="modal-form-txtFormat">jpeg, png : 4mo max</p>
+                            </div>
                             <!-- Prévisualisation de l'image -->
-                            <img id="imagePreview" src="" alt="Prévisualisation de l'image" style="display:none; max-width: 50%; height: auto;"/>
+                             <div id="divImagePreview">
+                                <img id="imagePreview" src="" alt="Prévisualisation de l'image"/>
+                             </div>
                             <input 
                                 type="file" 
                                 name="image"
                                 id="imageUpload" 
                                 accept="image/png, image/jpeg" required/>
-                            <p class="modal-form-txtFormat">jpeg, png : 4mo max</p>
                          </label>
         
                         <label for="title">Titre</label>
                         <input type="text" id="title" name="title" required/>
-        
+    
                         <label for="category">Catégorie</label>
                         <select id="category" name="category" required>
-                            <option value="" disabled selected>Choisissez une catégorie</option>
+                            <!-- <option value="" disabled selected></option> -->
+                            <option value=""></option>
+                            <!-- <option value="1" disabled selected>bidon</option> -->
                             <!-- Option générer dynamiquement -->
                         </select>
-                        <input class="btn-Send-Photo" type="submit" value="Valider">
+                        <div class="modal-bar" id="modalBarAddImg"></div>
+                        <input class="btn-Send-Photo" id="btnSendImg" type="submit" value="Valider">
                     </form> 
                 </div>
             </div>

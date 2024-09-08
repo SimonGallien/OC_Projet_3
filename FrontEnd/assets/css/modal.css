@@ -31,6 +31,12 @@
 
 /* CSS en commun */
 
+.modal-bar {
+	height: 1px;
+	background-color: var(--modal-bar-color);
+	width: 100%;
+}
+
 /* class utilisé à l'ouverture de la modale */
 .icone-modal-deleteView {
 	box-sizing: border-box;
@@ -99,7 +105,6 @@
 
 .modal-photos img {
 	width: 100%;
-	/* max-width: 100%;  */
 	display: block;
     height:auto;
 }
@@ -125,12 +130,9 @@
 	padding: 0;
 }
 
-.modal-bar {
-	height: 1px;
-	background-color: var(--modal-bar-color);
+#modalBarViewGallery {
 	margin-top: 68px;
 	margin-bottom: 38px;
-	width: 100%;
 }
 
 #openAddPhotoView {
@@ -139,29 +141,35 @@ margin :0;
 
 /* CSS de la partie Ajouter photo */
 #addPhotoView {
+	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	width: 100%;
+	padding-left: 105px;
+	padding-right: 105px;
+	padding-bottom: 55px;
 }
 
-.modal-form {
+#uploadForm {
+	box-sizing: border-box;
+	width: 100%;
 	display: flex;
 	flex-direction: column;
-	margin-top: 15px;
-	padding-left: 50px;
-	padding-right: 50px;
+	margin-bottom:0;
+	margin-top:36px;
 }
 
 .custom-file-upload {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: space-between;
 	align-items: center;
 	background-color: var(--modal-addPhoto-backgroung);
 	border-radius: 5px;
-	margin-bottom: 15px;
+	margin-bottom: 30px;
+	height: 169px;
 }
 
 .custom-file-upload input[type="file"] {
@@ -169,21 +177,117 @@ margin :0;
 }
 
 .fa-image {
-	font-size: 5em;
-	margin-top: 5px;
-	margin-bottom: 5px;
+	font-size: 60px;
+	margin-top: 22px;
+	margin-bottom: 10px;
 	color: var(--modal-addPhoto-color-icone);
+	padding: 0;
+}
+
+#modalContainerPreviewTxt {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+#modalContainerFormTxt {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 36px;
+	width: 173px;
+	border-radius: 50px;
+	background-color: var(--modal-addPhoto-color-icone);
 }
 
 .modal-form-txt {
-	padding: 5px;
-	border-radius: 10px;
-	background-color: var(--modal-addPhoto-color-icone);
-	color: var(--modal-addPhoto-color-txt);
+	color: var(--modal-addPhoto-color-txtAddPhoto);
+	font-weight: bold;
 }
 
 .modal-form-txtFormat {
 	font-size: 10px;
-	margin-top: 5px;
-	margin-bottom: 5px;
+	margin-top: 7px;
+	margin-bottom: 19px;
+}
+
+#modalBarAddImg{
+	margin-top: 47px;
+	margin-bottom: 32px;
+}
+
+#btnSendImg {
+	margin:0;
+	background-color: var(--modal-addPhoto-color-btnSendNoValid);
+}
+
+#btnSendImg.enabled {
+	margin:0;
+	background-color: var(--main-color);
+}
+
+#divImagePreview {
+	display: none;
+	height: 100%;
+	width: auto;
+}
+
+#imagePreview {
+	height: 100%; /* L'image prend 100% de la hauteur du conteneur */
+	width: auto; /* La largeur s'adapte automatiquement */
+	object-fit: contain; /* L'image garde ses proportions */
+}
+
+/******************************/
+/********* RESPONSIVE *********/
+/******************************/
+
+@media (max-width: 768px) {
+
+	.modal-wrapper {
+		width: 480px;
+	}
+
+	#galleryView {
+		padding-left: 40px;
+		padding-right: 40px;
+		padding-bottom: 20px;
+	}
+
+	.modal-photos {
+		grid-template-columns: repeat(4, 1fr);
+	}
+}
+
+@media (max-width: 480px) {
+
+	.modal-wrapper {
+		width: 320px;
+	}
+
+	#galleryView {
+		padding-left: 10px;
+		padding-right: 10px;
+		padding-bottom: 20px;
+	}
+
+	.modal-photos {
+		margin-top: 23px;
+		grid-template-columns: repeat(3, 1fr);
+		max-height: 300px;
+	}
+
+	#title-modal-gallery {
+		font-size: 22px;
+	}
+
+	.icone-modal-deleteView {
+		padding-top: 20px;
+		padding-right: 20px;
+	}
+
+	.modal-bar {
+		margin-top: 34px;
+		margin-bottom: 19px;
+	}
 }

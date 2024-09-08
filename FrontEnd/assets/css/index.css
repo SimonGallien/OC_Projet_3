@@ -44,6 +44,7 @@
 }
 
 #link-edit .fa-pen-to-square {
+	pointer-events: auto; /* Assure que l'icône réagit bien au clic */
 	font-size: 15.58px;
 	color: black;
 }
@@ -56,7 +57,7 @@
 	font-size: 14px;
 	display: flex;
 	align-items: flex-end;
-	line-height: 0.6;
+	line-height: 0.7;
 	margin-left: 221px;
 }
 
