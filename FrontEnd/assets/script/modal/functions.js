@@ -3,7 +3,10 @@
 import {loadConfig} from "../config.js";
 import {getAllWorks, showProjets} from "../index/functions.js";
 import {listCategories} from "../index/index.js";
-let modal = null; 
+
+export let modal = null; 
+const focusableSelector = 'button, a, input, textarea, select';
+let focusables = [];
 
 /**
  * Affichage de la boîte modale à partir du DOM si elle a déjà été chargé 
@@ -16,8 +19,8 @@ export async function openModal (event) {
         event.preventDefault();
         // Extraire l'URL cible de l'événement
         let triggerElement = event.target; // L'élément qui a déclenché l'événement
-
-       // Si l'utilisateur clique sur l'icône, on remonte vers l'élément parent <a>
+       // Si l'utilisateur clique sur une icône contenu dans la balise du lien 
+       // qui déclenche l'ouverture de la modale, on remonte vers l'élément parent <a> qui contient le href
         if (triggerElement.tagName === 'I') {
             triggerElement = triggerElement.closest('a');
         }
@@ -42,11 +45,12 @@ export async function openModal (event) {
                 throw new Error(`La modale avec l'URL ${url} n'a pas été trouvé.`);
             }
     
-            // Extraire le texte HTML de la réponse
+            // Extraire tout le contenu HTML de la modale
             const html = await response.text();
     
             // Créer un fragment de document à partir de la chaîne html
             const fragment = document.createRange().createContextualFragment(html); //fragment temporaire
+            // On récupère la partie du html à intégrer dans le DOM
             modal = fragment.querySelector(modalId);
     
             // Vérifier si l'élément de la modale a été trouvé
@@ -63,13 +67,16 @@ export async function openModal (event) {
         }
     
         // Afficher la boîte modal
-        modal.style.display = null;
+        modal.style.display = null; //supprime le display:none dans le html et c'est le css qui prend le relai
         modal.removeAttribute('aria-hidden');
         modal.setAttribute('aria-modal', 'true');
 
+        // Ajout de l'écouteur pour fermer la modale avec la touche Escape
+        //window.addEventListener('keydown', handleEscapeKey);
+
         // chargement du contenu dynamique de la modale
         await loadImgModal(); // Chargement des photos avec l'icone corbeille
-        
+                
         // Charge le contenu dynamique du formulaire, liste des catégories
         const selectForm = modal.querySelector("#category");
         const existOption = modal.querySelectorAll("#category option");
@@ -83,18 +90,15 @@ export async function openModal (event) {
                     selectForm.appendChild(option);
             })
         }
-
         // Ajout des écouteurs d'événements à chaque réouverture
         addEventListeners(); // Important : réattache les événements après chaque ouverture
         const form = modal.querySelector('#uploadForm');
         checkFormCompletion(form);  // Vérifier l'état du formulaire à l'ouverture
-
-        // Ajout de l'écouteur pour fermer la modale avec la touche Escape
-        window.addEventListener('keydown', handleEscapeKey);
-
+        focusableElementVisible();
     } catch (error) {
         console.error('Erreur lors de l\'ouverture de la modale:', error.message);
     }
+    return modal;
 }
 
 /**
@@ -108,11 +112,6 @@ export function closeModal (){
     
         // Supprimer les listeners
         removeEventListeners();
-    
-        // Cacher la modale
-        modal.style.display = "none";
-        modal.setAttribute('aria-hidden', 'true');
-        modal.removeAttribute('aria-modal');
     
         // Réinitialise la vue de la modale pour la prochaine ouverture
         showGalleryView();
@@ -131,8 +130,14 @@ export function closeModal (){
         document.querySelector('.modal-form-txt').style.display = 'block';
         document.querySelector('.modal-form-txtFormat').style.display = 'block';
         modal.querySelector('#modalContainerPreviewTxt').style.display = 'flex';
+        // Cacher la modale
+        window.setTimeout(()=>{
+            modal.style.display = "none";
+            modal = null;
+        }, 500)
+        modal.setAttribute('aria-hidden', 'true');
+        modal.removeAttribute('aria-modal');
         
-        modal = null;
 
     } catch (error) {
         console.error("Erreur lors de la fermeture de la modale :", error.message);
@@ -179,6 +184,9 @@ export async function loadImgModal() {
             imageElement.src = img.src;
             imageElement.alt = img.alt;
 
+            // Définir les attributs de a
+            linkElement.setAttribute('tabindex', '0');
+
             // Ajouter les classes et lier l'icône avec l'image via data-attribute
             iconeElement.classList.add("fa-solid", "fa-trash-can");
             iconeElement.dataset.imgId = img.id;// Utiliser data-img-id pour lier avec l'image
@@ -215,6 +223,7 @@ export function showAddPhotoView () {
     modal.querySelector("#prevBtn-photoView").style.display = null;
     document.getElementById('modalNav').classList.add('icone-modal-addView');
     document.getElementById('modalNav').classList.remove('icone-modal-deleteView');
+    focusableElementVisible();
 }
 
 /**
@@ -222,14 +231,14 @@ export function showAddPhotoView () {
  * et montre la div avec l'id galleryView
  */
 export function showGalleryView () {
-    //     // On récupère les 2 id galleryView et addPhotoView et on cache addPhotoView et affiche galleryView
+    // On récupère les 2 id galleryView et addPhotoView et on cache addPhotoView et affiche galleryView
     modal.querySelector("#galleryView").style.display = null;
     modal.querySelector("#addPhotoView").style.display = "none";
     // On récupère l'id du btn flèche qui sert à retourner à galleryPhoto
     modal.querySelector("#prevBtn-photoView").style.display = "none";
     document.getElementById('modalNav').classList.remove('icone-modal-addView');
     document.getElementById('modalNav').classList.add('icone-modal-deleteView');
-
+    focusableElementVisible();
 }
 
 /**
@@ -270,6 +279,7 @@ export async function deleteImage(event) {
                 const projets = await getAllWorks();
                 await showProjets(projets);
                 await loadImgModal();
+                focusableElementVisible();
                 break;
             case 401:
                 console.error("La session a expiré, veuillez vous reconnecter svp");
@@ -405,6 +415,7 @@ function removeEventListeners() {
         });
     
         modal.removeEventListener('click', closeModal);
+
     } catch (error){
         console.error('Erreur lors de la suppression des écouteurs :', error);
     }
@@ -416,7 +427,7 @@ function removeEventListeners() {
  */
 export function handleEscapeKey(event) {
     if ((event.key === "Escape" || event.key === "Esc") && modal) {
-        event.preventDefault(); // Empêche d'autres actions par défaut liées à la touche Escape
+        //event.preventDefault(); // Empêche d'autres actions par défaut liées à la touche Escape
         closeModal(event);
 
         // Supprimer l'écouteur 'keydown' une fois que la modale est fermée
@@ -491,4 +502,73 @@ function checkFormCompletion(form) {
  */
 function handleInput(event) {
     checkFormCompletion(event.target.form); // Appelle la fonction de vérification du formulaire
+}
+
+/**
+ * Cette fonction met à jour le tableau d'éléments focusables entre les 2 vues de la modale
+ */
+function focusableElementVisible() {
+    const galleryView = modal.querySelector('#galleryView');
+    const addPhotoView = modal.querySelector('#addPhotoView');
+    focusables = [];
+    if (galleryView.style.display === 'none'){
+        focusables.push(document.querySelector('#btn-xmark-close'));
+        focusables.push(document.querySelector('#prevBtn-photoView'));
+        focusables = focusables.concat(Array.from(addPhotoView.querySelectorAll(focusableSelector)));
+    } else {
+        focusables.push(document.querySelector('#btn-xmark-close'));
+        focusables = focusables.concat(Array.from(galleryView.querySelectorAll(focusableSelector)));
+    }
+    console.log("Tableau focusables :", focusables);
+}
+
+let index = -1;
+/**
+ * Cette fonction est appelé à chaque fois que l'utilisateur appui sur TAB
+ * @param {*} event 
+ */
+export function focusInModal(event) {
+    event.preventDefault();
+   // Si aucun élément n'est focus, index sera = -1 donc avec le index ++ on démarre bien à 0
+    let index = focusables.findIndex(f => f === modal.querySelector(':focus')); // Sinon, on passe à l'élément suivant
+    if (event.shiftKey === true){
+        index--;
+    } else {
+        index++;
+    }
+
+    if (index < 0){
+        console.log('remise à zéro de index focus')
+        index = focusables.length - 1;
+    }
+
+    if (index >= focusables.length){
+        index = 0;
+    }
+
+    console.log(`${index} / ${focusables.length}`);
+    if (focusables[index] && focusables[index].disabled !== true) {
+        focusables[index].focus();
+    } else {
+        console.log("simuler index++")
+        // Si élément disabled on focus le suivant ou le précédent si shiftKey = true
+        if (event.shiftKey === true){
+            index--;
+            // On vérifie qu'il est bien un précédent sinon on reboucle au dernier de la liste
+            if (index < 0){
+                console.log('remise à zéro de index focus')
+                index = focusables.length -1;
+            }
+        } else {
+            index++;
+            // On vérifie qu'il est bien un suivant sinon on reboucle à 0
+            if (index >= focusables.length){
+                console.log('remise à zéro de index focus')
+                index = 0;
+            }
+        } 
+
+        // On focus sur l'élément
+        focusables[index].focus();
+    }
 }

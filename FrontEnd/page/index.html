@@ -40,7 +40,7 @@
 
 	<section id="portfolio">
 		<h2 class="title" id="portfolioTitle">Mes Projets
-			<a href="modal.html#modal1" class="js-modal" id="link-edit" style="display: none;">
+			<a href="../partials/modal.html#modal1" class="js-modal" id="link-edit" style="display: none;">
 			<i class="fa-regular fa-pen-to-square"></i>
 				modifier
 			</a>
@@ -55,7 +55,7 @@
 		<p>Vous avez un projet ? Discutons-en !</p>
 		<form action="#" method="post">
 			<label for="name">Nom</label>
-			<input type="text" name="name" id="name" autocomplete="name">
+			<input type="text" name="name" id="name" autocomplete="name" pattern="^[a-zA-Z0-9À-ÿ\s]{1,63}$">
 			<label for="email">Email</label>
 			<input type="email" name="email" id="email" autocomplete="email">
 			<label for="message">Message</label>

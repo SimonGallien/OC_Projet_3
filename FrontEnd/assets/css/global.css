@@ -71,12 +71,15 @@ table {
 /****** MISE EN PAGE ******/
 /**************************/
 
+* {
+	box-sizing: border-box;
+}
+
 body {
 	display: flex;
     flex-direction: column;
     justify-content: space-between;
 	align-items: center;
-	box-sizing: border-box;
 	margin:auto;
 	font-family: 'Work Sans' ;
 	font-size: 14px;
@@ -145,10 +148,10 @@ input, select {
 	color: var(--second-txt-color);
 }
 
-input:focus, select:focus {
+/*input:focus, select:focus {
 	/*outline: none;*/  /* Supprime la bordure de focus, je la garde pour l'accessibilité */
-	border: none;   /* Supprime la bordure normale (facultatif si tu veux enlever la bordure complètement) */
-}
+	 /*border: none;   Supprime la bordure normale*/
+/*}*/
   
 
 select {

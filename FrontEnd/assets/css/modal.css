@@ -1,16 +1,26 @@
 /******************************/
 /*** AFFICHAGE DE LA MODALE ***/
 /******************************/
-.modal-wrapper {
-	width: 630px;
-	/* max-width: calc(100vw - 20px); 100vh 1 x la largeur de l'écran */
-	/* max-height: calc(100vh - 20px); 100vh 1 x la hauteur de l'écran */
-	background: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
+
+/* ANIMATION */
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes slideFromTop {
+	from { transform: translateY(-500px); }
+	to { transform: translateY(0px); }
+}
+
+@keyframes fadeOut {
+	from { opacity: 1; }
+	to { opacity: 0; }
+}
+
+@keyframes slideToBottom {
+	from { transform: translateY(0px); }
+	to { transform: translateY(500px); }
 }
 
 .modal {
@@ -23,6 +33,29 @@
 	width:100%;
 	height: 100%;
 	background: rgba(0, 0 ,0 , 0.3);
+	animation: fadeIn .3s both;
+}
+
+.modal-wrapper {
+	overflow: auto;
+	width: 630px;
+	max-width: calc(100vw - 20px); /*100vh 1 x la largeur de l'écran */
+	max-height: calc(100vh - 20px); /*100vh 1 x la hauteur de l'écran */
+	background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+	animation: slideFromTop .5s both;
+}
+
+.modal[aria-hidden="true"] {
+	animation-name: fadeOut;
+}
+
+.modal[aria-hidden="true"] .modal-wrapper{
+	animation-name: slideToBottom;
 }
 
 /******************************/
@@ -170,10 +203,33 @@ margin :0;
 	border-radius: 5px;
 	margin-bottom: 30px;
 	height: 169px;
+	position: relative;
 }
 
 .custom-file-upload input[type="file"] {
-	display: none;
+	/* display: none; */
+	opacity: 0;
+	position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    cursor: pointer; /* Pour s'assurer que l'utilisateur peut toujours interagir */
+}
+.custom-file-upload input[type=file]::file-selector-button {
+	border: none;
+	background:none;
+	color: var(--modal-addPhoto-backgroung);
+	font-size: 0;
+	cursor: pointer;
+  }
+
+.custom-file-upload input[type="file"]:focus {
+	border:1px solid black;
+	color: var(--modal-addPhoto-backgroung);
+	font-size: 0;
+	opacity: 100;
 }
 
 .fa-image {
@@ -244,9 +300,9 @@ margin :0;
 
 @media (max-width: 768px) {
 
-	.modal-wrapper {
+	/* .modal-wrapper {
 		width: 480px;
-	}
+	} */
 
 	#galleryView {
 		padding-left: 40px;
@@ -266,9 +322,9 @@ margin :0;
 
 @media (max-width: 480px) {
 
-	.modal-wrapper {
+	/* .modal-wrapper {
 		width: 320px;
-	}
+	} */
 
 	#galleryView {
 		padding-left: 10px;
