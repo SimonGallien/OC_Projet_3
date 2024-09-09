@@ -251,7 +251,6 @@ export function filterByCategory(button){
             })
     
         } else {
-            console.log("Filtre TOUS");
             // On affiche toute les figures display=null
             galleryFigure.forEach(figure => {
                 figure.setAttribute("style", "display: null;");

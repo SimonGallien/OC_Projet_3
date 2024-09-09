@@ -73,7 +73,6 @@ export async function openModal (event) {
         // Charge le contenu dynamique du formulaire, liste des catégories
         const selectForm = modal.querySelector("#category");
         const existOption = modal.querySelectorAll("#category option");
-        console.log(existOption);
         if (existOption.length <= 1){
             listCategories.forEach (category => {
                 // Création d'éléments <options> ayant pour valeur le nom de catégorie
@@ -338,6 +337,7 @@ export async function addImage(event){
                 const projets = await getAllWorks();
                 await showProjets(projets);
                 await loadImgModal();
+                await closeModal();
                 break;
             case 400:
                 console.error('Erreur : Requête incorrecte. Vérifiez les données envoyées.');
@@ -468,7 +468,10 @@ export function handleEscapeKey(event) {
     }
 }
 
-// Fonction pour vérifier si tous les champs requis sont remplis
+/**
+ * Fonction pour vérifier si tous les champs requis sont remplis
+ * @param {*} form 
+ */
 function checkFormCompletion(form) {
 
     // On récupère tout les champs du du formulaires
@@ -507,7 +510,10 @@ function checkFormCompletion(form) {
     }
 }
 
-// Fonction de rappel pour la vérification du formulaire
+/**
+ * Fonction de rappel pour la vérification du formulaire
+ * @param {*} event 
+ */
 function handleInput(event) {
     checkFormCompletion(event.target.form); // Appelle la fonction de vérification du formulaire
 }

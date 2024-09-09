@@ -9,7 +9,6 @@ await genererHeader();
 await genererFooter();
 
 document.querySelector('#btn-login a').style.fontWeight ='bold';
-console.log(document.querySelector('#btn-login'));
 
 const loginForm = document.querySelector(".formulaire-connection");
 
