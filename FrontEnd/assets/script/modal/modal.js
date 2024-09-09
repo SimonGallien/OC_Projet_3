@@ -1,4 +1,4 @@
-import {openModal} from "./modal_fct.js";
+import {openModal} from "./functions.js";
 
 const modalDemand = document.querySelector('.js-modal');
 

@@ -1,7 +1,7 @@
 /*Ce fichier contient toutes les fonctions qui gère la boîte modal*/
 
 import {loadConfig} from "../config.js";
-import {getAllWorks, showProjets} from "../index/index_fct.js";
+import {getAllWorks, showProjets} from "../index/functions.js";
 import {listCategories} from "../index/index.js";
 let modal = null; 
 

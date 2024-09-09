@@ -2,8 +2,8 @@
  * Gère l'affichage et les interaction de la page login
  */
 
-import {genererHeader, genererFooter} from "../index/index_fct.js";
-import {login} from "./login_fct.js";
+import {genererHeader, genererFooter} from "../index/functions.js";
+import {login} from "./functions.js";
 
 await genererHeader();
 await genererFooter();
