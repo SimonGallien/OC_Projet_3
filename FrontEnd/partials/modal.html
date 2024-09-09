@@ -41,7 +41,7 @@
                     <form class="modal-form" id="uploadForm" name="fileinfo" enctype="multipart/form-data" >
                         <!-- Boîte + Ajouter photo -->
                          <label for="imageUpload" class="custom-file-upload">
-                            <div id="modalContainerPreviewTxt">
+                            <div id="modalContainerPreviewTxt" class="form-container-no-img-charge">
                                 <i class="fa-regular fa-image"></i> 
                                 <div id="modalContainerFormTxt"> 
                                     <p class="modal-form-txt">+ Ajouter photo</p>
@@ -49,8 +49,8 @@
                                 <p class="modal-form-txtFormat">jpeg, png : 4mo max</p>
                             </div>
                             <!-- Prévisualisation de l'image -->
-                             <div id="divImagePreview">
-                                <img id="imagePreview" src="" alt="Prévisualisation de l'image"/>
+                             <div id="divImagePreview" class="form-container-img-preview">
+                                <img id="imagePreview" class="form-img-preview" src="" alt="Prévisualisation de l'image"/>
                              </div>
                             <input 
                                 type="file" 

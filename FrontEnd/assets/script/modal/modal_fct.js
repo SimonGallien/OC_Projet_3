@@ -288,7 +288,7 @@ export async function deleteImage(event) {
 
 /**
  * Ajoute un projet à l'API et sur la page sans devoir recharger
- * @param {event} : click sur ajouter image 
+ * @param {event} : click sur ajouter image, possible si tout le formulaire est correctement rempli
  * @returns en cas d'erreur
  */
 export async function addImage(event){
@@ -303,16 +303,6 @@ export async function addImage(event){
         // l'objet représentant l'évènement
         const myForm = modal.querySelector("#uploadForm");
         const formData = new FormData(myForm);
-
-        // Validation du formulaire avant envoi
-        const imageFile = formData.get('image');
-        const title = formData.get('title');
-        const category = formData.get('category');
-
-        if (!imageFile || !title || !category) {
-            console.error("Veuillez remplir tous les champs du formulaire.");
-            return;
-        }
 
         // Récupération du token d'authentification
         const token = localStorage.getItem('authToken');
@@ -357,51 +347,19 @@ export async function addImage(event){
     }
 }
 
-/**
- * Affiche l'image en preview dans le formulaire
- * @param {event}  : détecte le changement d'image dans l'input image du formulaire
- */
-export function previewImage(event) {
-    try {
-        const file = event.target.files[0]; // Récupère le premier fichier sélectionné
-        const previewContainer = modal.querySelector('#divImagePreview');
-        const preview = modal.querySelector('#imagePreview');
-        if (file) {
-    
-            modal.querySelector('#modalContainerPreviewTxt').style.display = 'none';
-    
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                preview.src = event.target.result; // Définir la source de l'image comme le résultat de la lecture
-                previewContainer.style.display = 'flex'; // Affiche l'image
-            };
-    
-            reader.readAsDataURL(file); // Lire le fichier comme une URL de données
-        } else {
-            preview.style.display = 'none'; // Cache l'image si aucun fichier n'est sélectionné
-            console.error("Pas d'image sélectionné");
-        }
-    }catch (error){
-        console.error('Erreur de prévisualisation de l\'image:', error);
-    }
-
-}
-
 // Ajout des écouteurs d'événements
 export function addEventListeners() {
     try {
         const openAddPhotoViewListener = modal.querySelector('#openAddPhotoView');
         const prevBtnPhotoViewListener = modal.querySelector('#prevBtn-photoView');
         const jsModalCloseListener = modal.querySelector(".js-modal-close");
-        const jsModalStopListener = modal.querySelector(".js-modal-stop");
-        const imageUploadListener = modal.querySelector("#imageUpload"); 
+        const jsModalStopListener = modal.querySelector(".js-modal-stop"); 
         const btnSendPhotoListener = modal.querySelector(".btn-Send-Photo");
     
         openAddPhotoViewListener.addEventListener('click', showAddPhotoView);
         prevBtnPhotoViewListener.addEventListener('click', showGalleryView);
         jsModalCloseListener.addEventListener('click', closeModal);
         jsModalStopListener.addEventListener('click', stopPropagation);
-        imageUploadListener.addEventListener('change', previewImage);
         btnSendPhotoListener.addEventListener('click', addImage);
 
         const form = modal.querySelector('#uploadForm');
@@ -429,14 +387,12 @@ function removeEventListeners() {
         const prevBtnPhotoViewListener = modal.querySelector('#prevBtn-photoView');
         const jsModalCloseListener = modal.querySelector(".js-modal-close");
         const jsModalStopListener = modal.querySelector(".js-modal-stop");
-        const imageUploadListener = modal.querySelector("#imageUpload"); 
         const btnSendPhotoListener = modal.querySelector(".btn-Send-Photo");
     
         openAddPhotoViewListener.removeEventListener('click', showAddPhotoView);
         prevBtnPhotoViewListener.removeEventListener('click', showGalleryView);
         jsModalCloseListener.removeEventListener('click', closeModal);
         jsModalStopListener.removeEventListener('click', stopPropagation);
-        imageUploadListener.removeEventListener('change', previewImage);
         btnSendPhotoListener.removeEventListener('click', addImage);
         
         modal.querySelectorAll('.modal-photos .fa-trash-can').forEach(trashIcone => {
@@ -491,12 +447,31 @@ function checkFormCompletion(form) {
             // Vérifie si le fichier est vide ou non
             if (value.size === 0) {
                 allFilled = false;
+            // Vérifie si l'image est supérieur à 4mo   
             } else if (value.size > 4 * 1024 * 1024) {
                 allFilled = false;
                 alert('L\'image sélectionnée dépasse 4 Mo. Veuillez sélectionner une image plus petite.');
+            // Si il y a une image, on l'affiche en prévisualisation
+            } else if (value.size > 0) {
+                console.log("image valide pour preview")
+                const containertxt = form.querySelector('.form-container-no-img-charge');
+                const containerImg = form.querySelector('.form-container-img-preview');
+                console.log(`Conteneur de l'image ${containerImg}`)
+                const image = form.querySelector('.form-img-preview');
+                console.log(`Balise image ${image}`)
+                if (containerImg && image) {
+                    console.log("On procède au changement de style")
+                    containertxt.style.display = 'none';
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                    image.src = event.target.result; // Définir la source de l'image comme le résultat de la lecture
+                    containerImg.style.display = 'flex'; // Affiche l'image
+                    }
+                    reader.readAsDataURL(value); // Lire le fichier comme une URL de données
+                }  
             }
         }
-    });
+    })
 
     // Gérer l'état du bouton de soumission
     const submitBtn = form.querySelector('input[type="submit"]');
