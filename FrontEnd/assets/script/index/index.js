@@ -10,6 +10,8 @@ await showProjets(listProjets);
 await genererHeader();
 await genererFooter();
 
+document.querySelector('#btn-projets a').style.fontWeight ='bold';
+
 // Création des filtres
 await createBtnFilters(listCategories);
 

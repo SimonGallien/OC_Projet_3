@@ -31,6 +31,7 @@
 }
 
 #portfolio {
+	width: 100%;
 	justify-content: center;
 	align-items: center;
 	margin-bottom: 57px;
@@ -69,13 +70,14 @@
 }
 
 .filters {
+	width: 100%;
 	display: flex;
 	justify-content: center;
 	margin: auto;
 	gap: 10px;
 	margin-bottom: 51px;
 	margin-top: 51px;
-	width: 585px;
+	max-width: 585px;
 }
 
 .filters button {
