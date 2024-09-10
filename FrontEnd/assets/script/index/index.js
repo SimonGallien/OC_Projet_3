@@ -30,7 +30,16 @@ btnLogout.addEventListener('click', () => {
         seDeconnecter();
 });
 
-document.getElementById('menu-toggle').addEventListener('click', function() {
-    const navLinks = document.querySelector('nav ul');
-    navLinks.classList.toggle('show'); // Bascule l'affichage du menu en mobile
+const burgerMenu = document.getElementById('menu-toggle');
+const navMenu = document.querySelector('.side-menu');
+const closeMenu = document.querySelector('.side-menu-close');
+
+burgerMenu.addEventListener('click', function() {
+    navMenu.classList.toggle('open');  // Ouvre ou ferme le menu en ajoutant/retirant la classe "open"
 });
+
+closeMenu.addEventListener('click', function() {
+    navMenu.classList.toggle('open');  // Ouvre ou ferme le menu en ajoutant/retirant la classe "open"
+});
+
+
