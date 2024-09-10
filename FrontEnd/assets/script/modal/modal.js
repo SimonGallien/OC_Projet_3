@@ -1,4 +1,4 @@
-import {openModal, focusInModal, modal} from "./functions.js";
+import {openModal, focusInModal, modal} from "./modalFunctions.js";
 
 const modalDemand = document.querySelector('.js-modal');
 modalDemand.addEventListener('click', async (event) => {

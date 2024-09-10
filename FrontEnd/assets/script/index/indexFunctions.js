@@ -1,133 +1,43 @@
 /**************************************************************
  **** CE FICHIER CONTIENT LES FONCTIONS UTILE POUR INDEX   ****
  **************************************************************/
+ import {setProjects, setCategories} from "../shared/state.js";
+ import {makeHttpRequest} from "../shared/api.js";
 
-import {loadConfig} from "../config.js";
-
-/**
- * Fonction asynchrone pour la récupération des projets depuis le localStorage sinon depuis l'API
- * @returns: promess projets('id', 'title', 'imageUrl', 'categoryId', 'userId', "'category':{'id', 'name'}"")
- */
-export async function getAllWorks() {
+ /**
+  * Enregistre les états des projets et catégories
+  */
+ export async function initProjects() {
     try {
-        //Chargement de config.json
-        const config = await loadConfig();
-        if (!config){
-            throw new Error("Problème avec le chargement du fichier config.json");
-        }
+        // Appel API pour récupérer tous les projets
+        const allProjects = await makeHttpRequest("works");
+        // Appel API pour récupérer toutes les catégories
+        const allCategories = await makeHttpRequest("categories");
 
-        // Récupération des projets depuis l'API
-        const reponse = await fetch(config.host + "works");
-        switch (reponse.status){
-            case 200:
-                let projets = await reponse.json();        
-                return projets;
-            case 500:
-                console.error('Unexpected Error');
-                break;
-        };
-    } catch {
-        console.error('Erreur réseau ou autre problème:', error);
-    }
-}
-
-/**
- * Fonction asynchrone qui fait une requête HTTP à l'API pour récupérer la liste des catégories
- * @returns promess catégories ('id', 'name')
- */
-export async function getCategories() {
-    try{
-        //Chargement de config.json
-        const config = await loadConfig();
-        if (!config){
-            throw new Error("Problème avec le chargement du fichier config.json");
-        };
-
-        // Récupération des catégories depuis l'API
-        const reponse = await fetch(config.host + "categories");
-        switch(reponse.status){
-            case 200:
-                let categories = await reponse.json();
-                // Transformation des categories en JSON
-                const listeCategories = JSON.stringify(categories);
-                // Stockage des informations dans le localStorage
-                window.localStorage.setItem("categories", listeCategories);
-                return categories;
-            case 500:
-                console.error('Unexpected Error');
-                break;
-        };
-        
-    } catch {
-        console.error('Erreur réseau ou autre problème:', error);
-    };
-};
-
-/**
- * Affiche le Header lorsque la fct est appelée
- */
-export async function genererHeader(){
-    try {
-        // Charger le header
-        await fetch('../partials/header.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('header-placeholder').innerHTML = data;
-        });
-    }catch (error) {
-        console.error('Erreur lors du chargement du header : ', error);
-    }
-}
-
-/**
- * Affiche le Footer lorsque la fct est appelée
- */
-export async function genererFooter(){
-    try {
-        // Charger le footer
-        fetch('../partials/footer.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('footer-placeholder').innerHTML = data;
-            });
-    }catch (error) {
-        console.error('Erreur lors du chargement du footer : ', error);
-    }
-}
-
-/**
- * Ajoute les projets au DOM
- * @param {*} projets 
- */
-export async function showProjets(projets) {
-    try{
-        // Récupération de l'élément du DOM qui accueillera les projets
-        const sectionPortfolio = document.querySelector(".gallery");
-        sectionPortfolio.innerHTML='';
-        // S'assurer que la section existe avant de procéder
-        if (!sectionPortfolio) {
-            console.error("L'élément .gallery n'a pas été trouvé dans le DOM.");
-            return;
-        }
-        projets.forEach (figure => {
-            // Création d’une balise dédiée à un projet
-            const figureElement = document.createElement("figure");
-            figureElement.setAttribute('figureId', figure.category.id);
-            // Création des balises 
-            const imageElement = document.createElement("img");
-            imageElement.src = figure.imageUrl;
-            imageElement.alt = figure.title;
-            imageElement.id = figure.id;
-            const nomElement = document.createElement("figcaption");
-            nomElement.innerText = figure.title;
-            // On rattache les balises <img> et <figcaption> à la balise <figure>
-            figureElement.appendChild(imageElement);
-            figureElement.appendChild(nomElement);
-            // On rattache la balise figure à la section Portfolio
-            sectionPortfolio.appendChild(figureElement);
-        })
+        // Stocker les projets dans l'état global
+        setProjects(allProjects);
+        setCategories(allCategories);
     } catch (error) {
-        console.error('Erreur lors du chargement des projets : ', error);
+        console.error('Erreur lors de la récupération des projets :', error);
+    } 
+}
+
+ /**
+  * 
+  * @param {*} allCategories 
+  */
+ export async function initFilters(allCategories) {
+    try{
+        createBtnFilters(allCategories);
+        // Gestions des filtres
+        const AllButtonFilter = document.querySelectorAll(".filters button"); // Récupération de tout les bouttons de filtres
+        AllButtonFilter.forEach(buttonFilter =>{
+            buttonFilter.addEventListener('click', () => {
+                filterByCategory(buttonFilter);
+            });
+        });
+    }catch (error){
+        console.error("Erreur lors de l'affichage des filtres :", error);
     }
 }
 
@@ -260,4 +170,3 @@ export function filterByCategory(button){
         console.error('Erreur de la fonctions filtre : ', error);
     }
 }
-

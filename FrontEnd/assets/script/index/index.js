@@ -1,10 +1,13 @@
-import {getAllWorks, getCategories, showProjets, createBtnFilters, filterByCategory, genererHeader, genererFooter,checkAuthentification, seDeconnecter} from "./functions.js";
-    
-// Appelle des fonction pour récupérer les projets, les affichers et créer les btn de filtres
-const listProjets = await getAllWorks();
-export const listCategories = await getCategories();
+import {initProjects, initFilters,checkAuthentification, seDeconnecter} from "./indexFunctions.js";
+import {genererHeader, genererFooter, showProjets} from "../shared/utils.js";
+import {getProjects, getCategories} from "../shared/state.js";
 
-await showProjets(listProjets);
+// Initialiser les projets lorsque le script est chargé
+await initProjects();
+
+const allProjects = getProjects();
+const allCategories = getCategories();
+console.log(allProjects);
 
 // Afficher le Header et Footer
 await genererHeader();
@@ -12,17 +15,8 @@ await genererFooter();
 
 document.querySelector('#btn-projets a').style.fontWeight ='bold';
 
-// Création des filtres
-await createBtnFilters(listCategories);
-
-// Gestions des filtres
-const btnFilter = document.querySelectorAll(".filters button"); // Récupération de tout les bouttons de filtres
-btnFilter.forEach(button =>{
-    button.addEventListener('click', () => {
-        filterByCategory(button);
-    });
-});
-
+showProjets();
+initFilters(allCategories);
 checkAuthentification();
 
 const btnLogout = document.querySelector("#btn-logout");
@@ -41,5 +35,3 @@ burgerMenu.addEventListener('click', function() {
 closeMenu.addEventListener('click', function() {
     navMenu.classList.toggle('open');  // Ouvre ou ferme le menu en ajoutant/retirant la classe "open"
 });
-
-

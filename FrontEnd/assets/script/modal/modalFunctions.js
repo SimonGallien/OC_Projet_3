@@ -1,8 +1,9 @@
 /*Ce fichier contient toutes les fonctions qui gère la boîte modal*/
 
-import {loadConfig} from "../config.js";
-import {getAllWorks, showProjets} from "../index/functions.js";
-import {listCategories} from "../index/index.js";
+import {loadConfig} from "../shared/config.js";
+import {makeHttpRequest, deleteProject, postProject} from "../shared/api.js";
+import {showProjets} from "../shared/utils.js";
+import {getProjects, getCategories, setProjects} from "../shared/state.js";
 
 export let modal = null; 
 const focusableSelector = 'button, a, input, textarea, select';
@@ -18,78 +19,20 @@ export async function openModal (event) {
     try{
         event.preventDefault();
         // Extraire l'URL cible de l'événement
-        let triggerElement = event.target; // L'élément qui a déclenché l'événement
-       // Si l'utilisateur clique sur une icône contenu dans la balise du lien 
-       // qui déclenche l'ouverture de la modale, on remonte vers l'élément parent <a> qui contient le href
-        if (triggerElement.tagName === 'I') {
-            triggerElement = triggerElement.closest('a');
-        }
-            
-        const target = triggerElement.getAttribute('href');
-        if (!target) {
-            throw new Error("Aucun 'href' trouvé dans l'élément déclencheur.");
-        }
-
-        const url = target.split('#')[0]; // Extraire l'url de la modale
-        const modalId = '#' + target.split('#')[1]; // Extraire l'ID de la modale
+        const triggerElement = getTriggerElement(event); // Gérer le trigger, lien "modifier" ou "icone" édition
+        const {url, modalId} = getModalTarget(triggerElement); // Extraire l'URL et l'ID
         
-        modal = document.querySelector(modalId); // Vérifier si la modale existe déjà
-
-        // Si la modale n'est pas dans le DOM, la charger dynamiquement  
-        if (!modal) {
-            // Charger le contenu de modal.html avec fetch
-            const response = await fetch(`../partials/${url}`);
-    
-            // Vérifier si la réponse est correcte
-            if (!response.ok) {
-                throw new Error(`La modale avec l'URL ${url} n'a pas été trouvé.`);
-            }
-    
-            // Extraire tout le contenu HTML de la modale
-            const html = await response.text();
-    
-            // Créer un fragment de document à partir de la chaîne html
-            const fragment = document.createRange().createContextualFragment(html); //fragment temporaire
-            // On récupère la partie du html à intégrer dans le DOM
-            modal = fragment.querySelector(modalId);
-    
-            // Vérifier si l'élément de la modale a été trouvé
-            if (!modal) {
-                throw new Error(`L'élément avec l'ID ${modalId} n'a pas été trouvé dans ${url}.`);
-            }
-    
-            // Ajouter l'élément extrait au DOM
-            document.body.append(modal);
-        }
-    
-        if (!modal) {
-            throw new Error(`La modale avec l'ID ${modalId} n'a pas été trouvée ou chargée.`);
-        }
-    
+        // Charger ou récupérer la modale
+        modal = await loadOrFetchModal(url, modalId);
+        
         // Afficher la boîte modal
         modal.style.display = null; //supprime le display:none dans le html et c'est le css qui prend le relai
         modal.removeAttribute('aria-hidden');
         modal.setAttribute('aria-modal', 'true');
 
-        // Ajout de l'écouteur pour fermer la modale avec la touche Escape
-        //window.addEventListener('keydown', handleEscapeKey);
+        // Charger le contenu dynamique
+        await loadDynamicContent(modal);
 
-        // chargement du contenu dynamique de la modale
-        await loadImgModal(); // Chargement des photos avec l'icone corbeille
-                
-        // Charge le contenu dynamique du formulaire, liste des catégories
-        const selectForm = modal.querySelector("#category");
-        const existOption = modal.querySelectorAll("#category option");
-        if (existOption.length <= 1){
-            listCategories.forEach (category => {
-                // Création d'éléments <options> ayant pour valeur le nom de catégorie
-                const option = document.createElement("option");
-                    option.innerText = category.name;
-                    option.value = category.id;
-                    // Ajout des éléments <option> au DOM
-                    selectForm.appendChild(option);
-            })
-        }
         // Ajout des écouteurs d'événements à chaque réouverture
         addEventListeners(); // Important : réattache les événements après chaque ouverture
         const form = modal.querySelector('#uploadForm');
@@ -99,6 +42,60 @@ export async function openModal (event) {
         console.error('Erreur lors de l\'ouverture de la modale:', error.message);
     }
     return modal;
+}
+
+// Fonction pour obtenir l'élément déclencheur de l'événement
+function getTriggerElement(event) {
+    let triggerElement = event.target;
+    if (triggerElement.tagName === 'I') {
+        triggerElement = triggerElement.closest('a');
+    }
+    return triggerElement;
+}
+
+// Fonction pour extraire l'URL et l'ID de la modale
+function getModalTarget(triggerElement) {
+    const target = triggerElement.getAttribute('href');
+    if (!target) throw new Error("Aucun 'href' trouvé dans l'élément déclencheur.");
+    
+    const url = target.split('#')[0];
+    const modalId = '#' + target.split('#')[1];
+    return {url, modalId};
+}
+
+// Fonction pour charger la modale depuis le serveur si elle n'existe pas encore dans le DOM
+async function loadOrFetchModal(url, modalId) {
+    let modal = document.querySelector(modalId);
+    if (!modal) {
+        const response = await fetch(`../partials/${url}`);
+        if (!response.ok) throw new Error(`La modale avec l'URL ${url} n'a pas été trouvée: ${response.status}`);
+
+        const html = await response.text();
+        const fragment = document.createRange().createContextualFragment(html);
+        modal = fragment.querySelector(modalId);
+        if (!modal) throw new Error(`L'élément avec l'ID ${modalId} n'a pas été trouvé dans ${url}.`);
+
+        document.body.append(modal);
+    }
+    return modal;
+}
+
+// Fonction pour charger le contenu dynamique de la modale
+async function loadDynamicContent() {
+    console.log('Load Dynamic Content');
+    await loadImgModal();
+
+    const selectForm = modal.querySelector("#category");
+    const existOption = modal.querySelectorAll("#category option");
+    const allCategories = getCategories();
+    if (existOption.length <= 1) {
+        allCategories.forEach(category => {
+            const option = document.createElement("option");
+            option.innerText = category.name;
+            option.value = category.id;
+            selectForm.appendChild(option);
+        });
+    }
 }
 
 /**
@@ -157,8 +154,11 @@ export function stopPropagation (event) {
  * Les listeners des icones corbeilles sont ajoutés ici, cela évite le rechargement de tout 
  * les écouteurs de la modale lors d'ajout d'image
  */
-export async function loadImgModal() {
+async function loadImgModal() {
     try {
+        console.log('load image modale');
+        const allProjects = getProjects();
+        console.log(allProjects);
         const modalContainer = modal.querySelector(".modal-photos");
 
         // Réinitialiser la galerie avant de la recharger
@@ -172,24 +172,26 @@ export async function loadImgModal() {
         const fragment = document.createDocumentFragment();
     
         // Récupération des images dans la gallerie
-        const galleryImages = document.querySelectorAll(".gallery figure img");
-    
-        galleryImages.forEach(img => {
+        //const galleryImages = document.querySelectorAll(".gallery figure img");
+        allProjects.forEach(element => {
+            console.log(element);
+        });
+        allProjects.forEach(projet => {
             const imageContainer = document.createElement("div");
             const imageElement = document.createElement("img");
             const iconeElement = document.createElement("i");
             const linkElement = document.createElement("a");
 
             // Définir les attributs de l'image
-            imageElement.src = img.src;
-            imageElement.alt = img.alt;
+            imageElement.src = projet.imageUrl;
+            imageElement.alt = projet.title;
 
             // Définir les attributs de a
             linkElement.setAttribute('tabindex', '0');
 
             // Ajouter les classes et lier l'icône avec l'image via data-attribute
             iconeElement.classList.add("fa-solid", "fa-trash-can");
-            iconeElement.dataset.imgId = img.id;// Utiliser data-img-id pour lier avec l'image
+            iconeElement.dataset.imgId = projet.id;// Utiliser data-img-id pour lier avec l'image
 
             imageContainer.appendChild(imageElement);
             imageContainer.appendChild(linkElement);
@@ -248,52 +250,38 @@ export function showGalleryView () {
  */
 export async function deleteImage(event) {
     try {
-        //Chargement de config.json
-        const config = await loadConfig();
-        if (!config){
-            throw new Error("Problème avec le chargement du fichier config.json");
-        };
         // On récupère l'ID de l'icone qui est le même que l'image
         const targetId = event.target.getAttribute('data-img-id');
-        // Récupération du token dans le local storage
-        const authToken = localStorage.getItem('authToken');
-        // Si le token n'existe pas, on arrête l'exécution de la fonction
-        if (!authToken) {
-            console.error("Token d'identication abs, session expirée");
-            return;
-        };
-        const urlDelete = `${config.host}works/${targetId}`;
+        const authToken = getAuthToken();
 
-        // Envoi de la requête DELETE à l'API
-        const response = await fetch(urlDelete, {
-            method: 'DELETE',
-            headers: {
-                'accept': '*/*',
-                'Authorization': `Bearer ${authToken}`,
-            }
-        });
-
-        switch (response.status){
-            case 204:
-                //MAJ DES PROJETS ET DE LA MODALE
-                const projets = await getAllWorks();
-                await showProjets(projets);
-                await loadImgModal();
-                focusableElementVisible();
-                break;
-            case 401:
-                console.error("La session a expiré, veuillez vous reconnecter svp");
-                break;
-            case 500:
-                console.error("Erreur serveur, veuillez réessayer plus tard.");
-                break;
-            default:
-                console.error("Comportement inattendu, essayez de rafraîchir la page.");
-                break;
-        }
+        await deleteProject(targetId, authToken);
+         
+        //MAJ DES PROJETS ET DE LA MODALE
+        updateProjects();
+        focusableElementVisible();
     } catch (error) {
         console.error('Erreur lors de la suppression:', error);
     }
+}
+
+async function updateProjects(){
+    // Appel API pour récupérer les projets
+    const newProjects = await makeHttpRequest('works');
+    setProjects(newProjects);
+    await showProjets();
+    await loadImgModal();
+}
+
+//Fonction qui retourne le token d'identification s'il existe
+function getAuthToken(){
+    // Récupération du token dans le local storage
+    const authToken = localStorage.getItem('authToken');
+    // Si le token n'existe pas, on arrête l'exécution de la fonction
+    if (!authToken) {
+        console.error("Token d'identication abs, session expirée");
+        return;
+    };
+    return authToken;
 }
 
 /**
@@ -301,57 +289,24 @@ export async function deleteImage(event) {
  * @param {event} : click sur ajouter image, possible si tout le formulaire est correctement rempli
  * @returns en cas d'erreur
  */
-export async function addImage(event){
+async function addImage(event){
     event.preventDefault();
     try {
-        //Chargement de config.json
-        const config = await loadConfig();
-        if (!config){
-            throw new Error("Problème avec le chargement du fichier config.json");
-        };
         // On récupère les données du formulaire depuis
         // l'objet représentant l'évènement
         const myForm = modal.querySelector("#uploadForm");
         const formData = new FormData(myForm);
 
         // Récupération du token d'authentification
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            console.error('Token d\'authentification manquant.');
-            return;
-        }
+        const token = getAuthToken();
 
         // Envoyer la requête POST à l'API
-        const response = await fetch(config.host + "works", {
-            method: 'POST',
-            headers: {
-                'accept': 'application/json',
-                'Authorization': `Bearer ${token}`,  // Si un token est nécessaire
-            },
-            body: formData  // Utiliser formData comme body
-        })
+        await postProject(formData, token);
 
-        switch (response.status) {
-            case 201:
-                // Image reçu par l'API, MAJ des projets dynamiquement et de la modale
-                const projets = await getAllWorks();
-                await showProjets(projets);
-                await loadImgModal();
-                await closeModal();
-                break;
-            case 400:
-                console.error('Erreur : Requête incorrecte. Vérifiez les données envoyées.');
-                break;
-            case 401:
-                console.error('La session a expiré, veuillez vous reconnecter.');
-                break;
-            case 500:
-                console.error('Erreur serveur, réessayez plus tard.');
-                break;
-            default:
-                console.error(`Erreur inattendue : ${response.status}`);
-                break;
-        } 
+        // Image reçu par l'API, MAJ des projets dynamiquement et de la modale
+        updateProjects();
+        closeModal();
+
     } catch (error) {
         console.error('Erreur lors de l\'envoi du formulaire :', error);
     }
@@ -440,7 +395,6 @@ export function handleEscapeKey(event) {
  * @param {*} form 
  */
 function checkFormCompletion(form) {
-
     // On récupère tout les champs du du formulaires
     const formData = new FormData(form);
     let allFilled = true;
@@ -464,14 +418,10 @@ function checkFormCompletion(form) {
                 alert('L\'image sélectionnée dépasse 4 Mo. Veuillez sélectionner une image plus petite.');
             // Si il y a une image, on l'affiche en prévisualisation
             } else if (value.size > 0) {
-                console.log("image valide pour preview")
                 const containertxt = form.querySelector('.form-container-no-img-charge');
                 const containerImg = form.querySelector('.form-container-img-preview');
-                console.log(`Conteneur de l'image ${containerImg}`)
                 const image = form.querySelector('.form-img-preview');
-                console.log(`Balise image ${image}`)
                 if (containerImg && image) {
-                    console.log("On procède au changement de style")
                     containertxt.style.display = 'none';
                     const reader = new FileReader();
                     reader.onload = function(event) {
@@ -522,7 +472,6 @@ function focusableElementVisible() {
     console.log("Tableau focusables :", focusables);
 }
 
-let index = -1;
 /**
  * Cette fonction est appelé à chaque fois que l'utilisateur appui sur TAB
  * @param {*} event 
