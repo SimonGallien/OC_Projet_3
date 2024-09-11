@@ -1,4 +1,4 @@
-import {loadConfig} from "../config.js";
+import {loadConfig} from "../shared/config.js";
 
 /**
  * Cette fct récupère les valeurs des inputs email et password  de l'utilisateur et envoi une requête au serveur

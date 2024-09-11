@@ -2,7 +2,7 @@
  * Gère l'affichage et les interaction de la page login
  */
 
-import {genererHeader, genererFooter} from "../shared/config.js";
+import {genererHeader, genererFooter} from "../shared/utils.js";
 import {login} from "./loginFunctions.js";
 
 await genererHeader();

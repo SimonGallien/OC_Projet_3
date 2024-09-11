@@ -7,7 +7,6 @@ await initProjects();
 
 const allProjects = getProjects();
 const allCategories = getCategories();
-console.log(allProjects);
 
 // Afficher le Header et Footer
 await genererHeader();
