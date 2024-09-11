@@ -14,10 +14,8 @@ window.addEventListener('keydown', function (event) {
 
     if (event.key === 'Enter') {
         const focusedElement = document.activeElement;
-        console.log(focusedElement.tagName);
         if (focusedElement && focusedElement.tagName === 'A') {
             // Simuler un clic lorsque la touche Entrée est pressée
-            console.log("bip");
             deleteImage(event);
         }
     }

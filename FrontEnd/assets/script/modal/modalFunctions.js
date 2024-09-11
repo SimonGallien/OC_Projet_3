@@ -185,7 +185,6 @@ export const deleteImage = async function(event) {
     event.preventDefault();
     if (event.target.classList.contains('fa-trash-can') || event.target.tagName === 'A'){
         let targetId ='';
-        console.log("oui tu as réussi")
         if (event.target.classList.contains('fa-trash-can')) targetId = event.target.getAttribute('data-img-id'); // On récupère l'ID de l'icone qui est le même que l'image
         if (event.target.tagName === 'A') {
             const trashIcone = event.target.querySelector('.fa-trash-can') 
