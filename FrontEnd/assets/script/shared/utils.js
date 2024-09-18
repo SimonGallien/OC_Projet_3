@@ -34,31 +34,6 @@ export async function genererFooter(){
 }
 
 /**
- * Effectue une requête HTTP vers l'API et retourne les données JSON
- * @async
- * @param {string} url - L'URL vers laquelle la requête HTTP doit être effectué.
- * @returns {Promise<object>} Une promesse résolue avec les données JSON en réponse de l'API.
- * @throws {Error} Lance une erreur si la requête échoue ou si le code de statut n'est pas dans la plage 200-299.
- */
-export async function makeHttpRequest(url){
-    try{
-        // Attendre la réponse de la requête HTTP, fetch renvoie un objet response
-        const response = await fetch(url); 
-        // La méthode .ok renvoie true si le code statut est dans la plage 200-299 sinon false
-        if (!response.ok) { 
-            throw new Error(`Erreur lors de la requête HTTP : ${response.status}`);
-        }
-        //  Lit le corps de la réponse et convertit les données JSON en objet JavaScript
-        const data = await response.json(); 
-        return data;
-    } catch (error){
-        console.error("Erreur lors de la requête :", error);
-        // Propager l'erreur pour que l'appelant puisse la gérer
-        throw error;
-    }
-}
-
-/**
  * Ajoute les projets au DOM
  * @param {*} projets 
  */

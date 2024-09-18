@@ -3,6 +3,8 @@ import {loadConfig} from "../shared/config.js";
 /**
  * Cette fct récupère les valeurs des inputs email et password  de l'utilisateur et envoi une requête au serveur
  * Si le serveur répond avec un token => connextion réussi
+ * 
+ * @param {Event} event - L'événement déclenché par l'utilisateur
  */
 export async function login(event){
     try {

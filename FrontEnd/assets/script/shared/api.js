@@ -63,6 +63,13 @@ export async function deleteProject(targetId, authToken){
     }
 }
 
+/**
+ * Cette fonction permet d'envoyer un nouveau projet vers l'API
+ * 
+ * @param {formData} formData 
+ * @param {string} authToken 
+ * @returns {Boolean} - true si l'APi à bien enregistrer le nouveau projet
+ */
 export async function postProject(formData, authToken) {
     try {
         // Vérifier si le token est fourni

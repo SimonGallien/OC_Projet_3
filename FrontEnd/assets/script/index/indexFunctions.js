@@ -23,6 +23,7 @@
 }
 
  /**
+  * Cette fonctions ajoute un listener pour chaque boutton de filtre
   * 
   * @param {*} allCategories 
   */
@@ -43,6 +44,7 @@
 
 /**
  * Affiche les options de filtres au dessus des projets
+ * 
  * @param {*} listCategories : la promess que retourne la fct listeCatégories()
  */
 export async function createBtnFilters(listCategories) {
@@ -142,7 +144,8 @@ export function seDeconnecter(){
 /**
  * Filtre les projets en fonctions du paramètre reçu en entrée, 
  * cache ou affiche les projets présent dans le DOM
- * @param {*} button : btn du filtre cliqué par l'utilisateur
+ * 
+ * @param {button} - btn du filtre cliqué par l'utilisateur
  */
 export function filterByCategory(button){
     try {
