@@ -134,7 +134,9 @@ export async function loginUser(email, password){
                 alert("Erreur dans la récupération du token.");
             };
         } else {
-            throw new Error("Echec de la connection.");
+            // throw new Error("Echec de la connection.");
+            const errorMessage = document.querySelector('.messageError');
+            errorMessage.style.display = 'flex';
         }
     } catch (error) {
         console.error('Erreur réseau ou autre problème:', error);
