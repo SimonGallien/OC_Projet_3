@@ -1,12 +1,5 @@
-import {initProjects, initFilters,checkAuthentification, seDeconnecter} from "./indexFunctions.js";
+import {initProjects, showFilters, filterByCategory,checkAuthentification, seDeconnecter} from "./indexFunctions.js";
 import {genererHeader, genererFooter, showProjets} from "../shared/utils.js";
-import {getProjects, getCategories} from "../shared/state.js";
-
-// Initialiser les projets lorsque le script est chargé
-await initProjects();
-
-const allProjects = getProjects();
-const allCategories = getCategories();
 
 // Afficher le Header et Footer
 await genererHeader();
@@ -14,14 +7,20 @@ await genererFooter();
 
 document.querySelector('#btn-projets a').style.fontWeight ='bold';
 
+// Initialiser les projets lorsque le script est chargé
+await initProjects();
+
 showProjets();
-initFilters(allCategories);
+
+showFilters();
+document.querySelectorAll(".filters button").forEach(buttonFilter =>{
+    buttonFilter.addEventListener('click', filterByCategory);
+});
+
 checkAuthentification();
 
 const btnLogout = document.querySelector("#btn-logout");
-btnLogout.addEventListener('click', () => {
-        seDeconnecter();
-});
+btnLogout.addEventListener('click', seDeconnecter);
 
 const burgerMenu = document.getElementById('menu-toggle');
 const navMenu = document.querySelector('.side-menu');

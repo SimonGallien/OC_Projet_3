@@ -1,7 +1,7 @@
 /**************************************************************
  **** CE FICHIER CONTIENT LES FONCTIONS UTILE POUR INDEX   ****
  **************************************************************/
- import {setProjects, setCategories} from "../shared/state.js";
+ import {setProjects, setCategories, getCategories} from "../shared/state.js";
  import {makeHttpRequest} from "../shared/api.js";
 
  /**
@@ -22,33 +22,14 @@
     } 
 }
 
- /**
-  * Cette fonctions ajoute un listener pour chaque boutton de filtre
-  * 
-  * @param {*} allCategories 
-  */
- export async function initFilters(allCategories) {
-    try{
-        createBtnFilters(allCategories);
-        // Gestions des filtres
-        const AllButtonFilter = document.querySelectorAll(".filters button"); // Récupération de tout les bouttons de filtres
-        AllButtonFilter.forEach(buttonFilter =>{
-            buttonFilter.addEventListener('click', () => {
-                filterByCategory(buttonFilter);
-            });
-        });
-    }catch (error){
-        console.error("Erreur lors de l'affichage des filtres :", error);
-    }
-}
 
 /**
  * Affiche les options de filtres au dessus des projets
  * 
- * @param {*} listCategories : la promess que retourne la fct listeCatégories()
  */
-export async function createBtnFilters(listCategories) {
+export function showFilters() {
     try{
+        const allCategories = getCategories();
         const divFilters = document.querySelector(".filters");
 
         // Création du bouton filtre "Tous"
@@ -58,16 +39,13 @@ export async function createBtnFilters(listCategories) {
         divFilters.appendChild(buttonElement);
     
         // Création des autres boutons filtre
-        listCategories.forEach(category => {
+        allCategories.forEach(category => {
+            const buttonElement = document.createElement("button");
+            buttonElement.innerText = category.name;
             const buttonId = category.id;
-            if (!document.querySelector(`[categoryId="${buttonId}"]`)) {
-                // Création des balises boutons
-                const buttonElement = document.createElement("button");
-                buttonElement.innerText = category.name;
-                buttonElement.setAttribute('categoryId', buttonId);
-                //On rattache la balise button à la div filters
-                divFilters.appendChild(buttonElement);
-            }
+            buttonElement.setAttribute('categoryId', buttonId);
+            //On rattache la balise button à la div filters
+            divFilters.appendChild(buttonElement);
         })
     } catch (error){
         console.error('Erreur lors de la création de options filtres : ', error);
@@ -145,18 +123,18 @@ export function seDeconnecter(){
  * Filtre les projets en fonctions du paramètre reçu en entrée, 
  * cache ou affiche les projets présent dans le DOM
  * 
- * @param {button} - btn du filtre cliqué par l'utilisateur
+ * @param {event} - event lié au clique sur un filtre par l'utilisateur
  */
-export function filterByCategory(button){
+export function filterByCategory(event){
     try {
-        const buttonAttribute = button.getAttribute('categoryId');
+        const buttonCategoryId = event.target.getAttribute('categoryId');
         const galleryFigure = document.querySelectorAll(".gallery figure");// Récupération de toute les figures dans la div gallery
     
-        if (buttonAttribute) {
-            // On cache tout sauf les figures avec ${buttonAttribute}
+        if (buttonCategoryId) {
+            // On cache tout sauf les figures avec ${buttonCategoryId}
             galleryFigure.forEach(figure => {
-                const figureAttribute = figure.getAttribute('figureId');
-                if (figureAttribute === buttonAttribute) {
+                const figureCategoryId = figure.getAttribute('figureId');
+                if (figureCategoryId === buttonCategoryId) {
                     figure.setAttribute("style", "display: null;"); // Affiche la figure
                 } else {
                     figure.setAttribute("style", "display: none;"); // Cache la figure

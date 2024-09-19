@@ -452,7 +452,7 @@ const postNewProject = async function(event){
     // Image reçu par l'API, MAJ des projets dynamiquement et de la modale
     const newProjects = await makeHttpRequest('works');
     setProjects(newProjects);
-    await showProjets();
+    showProjets();
     loadImages();
     closeModal(event);
 }

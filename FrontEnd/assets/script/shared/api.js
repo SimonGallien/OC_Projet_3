@@ -96,3 +96,48 @@ export async function postProject(formData, authToken) {
     }
     return true;  // Retourner true pour indiquer que l'ajout a réussi
 }
+
+
+/**
+ * Cette fonction établie la connection de l'utilisateur pour passer en mode éditeur
+ * 
+ * @param {string} email 
+ * @param {string} password 
+ * @returns {Boolean}
+ */
+export async function loginUser(email, password){
+    try {
+        // Création de l'objet connexion
+        const connection = {
+            email: email,
+            password: password,
+        };
+
+        // Converstion de la charge utile en json
+        const chargeUtile = JSON.stringify(connection);
+
+        const response = await fetch(config.host + "users/login",{
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: chargeUtile
+        })
+        let data = await response.json();
+        if(response.ok){
+            if (data.token) { // Vérifier si le token est présent dans la réponse
+                // Stocker l'ID de l'utilisateur et le token dans le localStorage
+                localStorage.setItem('userId', data.userId);
+                localStorage.setItem('authToken', data.token);
+                // Rediriger vers la page d'accueil
+                window.location.href = 'index.html';
+            } else {
+                // Gérer les erreurs de connexion
+                alert("Erreur dans la récupération du token.");
+            };
+        } else {
+            throw new Error("Echec de la connection.");
+        }
+    } catch (error) {
+        console.error('Erreur réseau ou autre problème:', error);
+    }; 
+    return true;
+}

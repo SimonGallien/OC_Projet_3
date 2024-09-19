@@ -34,10 +34,9 @@ export async function genererFooter(){
 }
 
 /**
- * Ajoute les projets au DOM
- * @param {*} projets 
+ * Ajoute les projets au DOM 
  */
-export async function showProjets() {
+export function showProjets() {
     try{
         const projets = getProjects();  // Récupérer les projets
         // Récupération de l'élément du DOM qui accueillera les projets
@@ -48,17 +47,17 @@ export async function showProjets() {
             console.error("L'élément .gallery n'a pas été trouvé dans le DOM.");
             return;
         }
-        projets.forEach (figure => {
+        projets.forEach (projet => {
             // Création d’une balise dédiée à un projet
             const figureElement = document.createElement("figure");
-            figureElement.setAttribute('figureId', figure.category.id);
+            figureElement.setAttribute('figureId', projet.categoryId);
             // Création des balises 
             const imageElement = document.createElement("img");
-            imageElement.src = figure.imageUrl;
-            imageElement.alt = figure.title;
-            imageElement.id = figure.id;
+            imageElement.src = projet.imageUrl;
+            imageElement.alt = projet.title;
+            imageElement.id = projet.id;
             const nomElement = document.createElement("figcaption");
-            nomElement.innerText = figure.title;
+            nomElement.innerText = projet.title;
             // On rattache les balises <img> et <figcaption> à la balise <figure>
             figureElement.appendChild(imageElement);
             figureElement.appendChild(nomElement);
