@@ -15,12 +15,14 @@ export async function makeHttpRequest(endUrl){
         const response = await fetch(config.host + endUrl); 
         // La méthode .ok renvoie true si le code statut est dans la plage 200-299 sinon false
         if (!response.ok) { 
+            
             throw new Error(`${response.status}`);
         }
         //  Lit le corps de la réponse et convertit les données JSON en objet JavaScript
         const data = await response.json(); 
         return data;
     } catch (error){
+        document.querySelector('#messageErreurBackEnd').style.display = null;
         console.error("Erreur lors de la requête :", error);
         // Propager l'erreur pour que l'appelant puisse la gérer
         throw error;
